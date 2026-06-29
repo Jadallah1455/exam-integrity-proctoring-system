@@ -1,0 +1,6 @@
+{
+  "name": "Exam Integrity Proctoring System",
+  "description": "A cybersecurity graduation project displaying real-time e-exam telemetry, Moodle-integrated API simulation, and AI-driven behavior risk analysis to prevent academic dishonesty.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,1172 @@
+{
+  "studentSubmissions": [
+    {
+      "studentId": "STD-2023-8891",
+      "studentName": "عبدالرحمن الشمري",
+      "examId": "EXM-CALC-101",
+      "examName": "الاختبار النصفي لمادة الكالكولاس",
+      "examDifficulty": "medium",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T03:07:34.287Z",
+      "endTime": "2026-06-16T03:19:34.287Z",
+      "durationMinutes": 12,
+      "scorePercent": 95,
+      "copyCount": 14,
+      "pasteCount": 12,
+      "tabSwitchesCount": 18,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-06-16T03:12:34.287Z",
+          "durationSeconds": 4
+        },
+        {
+          "timestamp": "2026-06-16T03:14:14.287Z",
+          "durationSeconds": 15
+        },
+        {
+          "timestamp": "2026-06-16T03:19:14.287Z",
+          "durationSeconds": 32
+        }
+      ],
+      "ipAddresses": [
+        "192.168.1.150"
+      ],
+      "mouseOutSeconds": 180,
+      "outOfBoundsCount": 15,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 15,
+          "changesCount": 0,
+          "copyCount": 2,
+          "pasteCount": 2
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 8,
+          "changesCount": 0,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 12,
+          "changesCount": 0,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 21,
+          "changesCount": 1,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 14,
+          "changesCount": 0,
+          "copyCount": 10,
+          "pasteCount": 8
+        }
+      ],
+      "signature": "c735e674ade048999cd6c019e82c44de8b3b7a7b4e357194d1372b4f92076809",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-4412",
+      "studentName": "سارة الغامدي",
+      "examId": "EXM-CALC-101",
+      "examName": "الاختبار النصفي لمادة الكالكولاس",
+      "examDifficulty": "medium",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T03:37:34.287Z",
+      "endTime": "2026-06-16T04:31:34.287Z",
+      "durationMinutes": 54,
+      "scorePercent": 88,
+      "copyCount": 1,
+      "pasteCount": 0,
+      "tabSwitchesCount": 1,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-06-16T06:07:34.287Z",
+          "durationSeconds": 2
+        }
+      ],
+      "ipAddresses": [
+        "10.0.4.15"
+      ],
+      "mouseOutSeconds": 8,
+      "outOfBoundsCount": 1,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 4,
+          "changesCount": 6,
+          "copyCount": 1,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 610,
+          "changesCount": 3,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 490,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 800,
+          "changesCount": 4,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 600,
+          "changesCount": 2,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "ed42aed4c054dde1887146ab70662944aaf00d1784c46fc1b22b8c80e3da3b53",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-3329",
+      "studentName": "خالد الحربي",
+      "examId": "EXM-CALC-101",
+      "examName": "الاختبار النصفي لمادة الكالكولاس",
+      "examDifficulty": "medium",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T04:37:34.287Z",
+      "endTime": "2026-06-16T04:55:34.287Z",
+      "durationMinutes": 18,
+      "scorePercent": 100,
+      "copyCount": 2,
+      "pasteCount": 2,
+      "tabSwitchesCount": 0,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "192.168.1.150"
+      ],
+      "mouseOutSeconds": 0,
+      "outOfBoundsCount": 0,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 120,
+          "changesCount": 0,
+          "copyCount": 2,
+          "pasteCount": 2
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 200,
+          "changesCount": 1,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 150,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 310,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 300,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "93455a20a47eb61883b0602b1b0644e819b8621c2fd2069818e9e83c4a0be082",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-7714",
+      "studentName": "ريم الدوسري",
+      "examId": "EXM-CALC-101",
+      "examName": "الاختبار النصفي لمادة الكالكولاس",
+      "examDifficulty": "medium",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T05:37:34.287Z",
+      "endTime": "2026-06-16T06:07:34.287Z",
+      "durationMinutes": 30,
+      "scorePercent": 78,
+      "copyCount": 0,
+      "pasteCount": 0,
+      "tabSwitchesCount": 0,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "192.168.12.18"
+      ],
+      "mouseOutSeconds": 5,
+      "outOfBoundsCount": 1,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 360,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 360,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 360,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 360,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 360,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "2a9ac02a82d7aa93bad52609b818bf77658ced1d2af0462609d48398504bf1c1",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-8891",
+      "studentName": "عبدالرحمن الشمري",
+      "examId": "EXM-CALC-102",
+      "examName": "الامتحان القصير الأول المتقدم",
+      "examDifficulty": "easy",
+      "examTimeLimitMinutes": 30,
+      "startTime": "2026-06-16T06:07:34.287Z",
+      "endTime": "2026-06-16T06:07:34.287Z",
+      "durationMinutes": 20,
+      "scorePercent": 100,
+      "copyCount": 0,
+      "pasteCount": 0,
+      "tabSwitchesCount": 0,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "192.168.1.189"
+      ],
+      "mouseOutSeconds": 4,
+      "outOfBoundsCount": 0,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 150,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 220,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "016dd0e68931493d079b134b8f28d6b25ea2a068838f043fbe54708327da057c",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-9932",
+      "studentName": "فهد العنزي",
+      "examId": "EXM-CALC-102",
+      "examName": "الامتحان القصير الأول المتقدم",
+      "examDifficulty": "easy",
+      "examTimeLimitMinutes": 30,
+      "startTime": "2026-06-16T06:07:34.288Z",
+      "endTime": "2026-06-16T06:07:34.288Z",
+      "durationMinutes": 12,
+      "scorePercent": 62,
+      "copyCount": 8,
+      "pasteCount": 7,
+      "tabSwitchesCount": 5,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-06-16T06:07:34.288Z",
+          "durationSeconds": 10
+        }
+      ],
+      "ipAddresses": [
+        "192.168.5.15"
+      ],
+      "mouseOutSeconds": 45,
+      "outOfBoundsCount": 4,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 80,
+          "changesCount": 0,
+          "copyCount": 2,
+          "pasteCount": 2
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 90,
+          "changesCount": 0,
+          "copyCount": 7,
+          "pasteCount": 6
+        }
+      ],
+      "signature": "06b0736147409043a3aab6396391ff433b07b1047dc11b4a78ceb0bcc9386bce",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-1025",
+      "studentName": "فيصل العتيبي",
+      "examId": "EXM-LINALG-301",
+      "examName": "الامتحان النهائي للجبر الخطي",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 90,
+      "startTime": "2026-06-16T06:07:34.288Z",
+      "endTime": "2026-06-16T06:07:34.288Z",
+      "durationMinutes": 45,
+      "scorePercent": 88,
+      "copyCount": 1,
+      "pasteCount": 1,
+      "tabSwitchesCount": 2,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "192.168.30.22"
+      ],
+      "mouseOutSeconds": 12,
+      "outOfBoundsCount": 3,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 400,
+          "changesCount": 1,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 520,
+          "changesCount": 2,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 480,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "b435dc4ca1d60143d377d95bef093895e1ec85cde59c3f8be750cf4a45ba1eba",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-1120",
+      "studentName": "نورة السبيعي",
+      "examId": "EXM-LINALG-301",
+      "examName": "الامتحان النهائي للجبر الخطي",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 90,
+      "startTime": "2026-06-16T06:07:34.288Z",
+      "endTime": "2026-06-16T06:07:34.288Z",
+      "durationMinutes": 75,
+      "scorePercent": 94,
+      "copyCount": 0,
+      "pasteCount": 0,
+      "tabSwitchesCount": 0,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "10.45.1.2"
+      ],
+      "mouseOutSeconds": 0,
+      "outOfBoundsCount": 0,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 800,
+          "changesCount": 3,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 920,
+          "changesCount": 4,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 780,
+          "changesCount": 2,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "9389db25297bf56fa6848e77ec5a4ed0ac20d05d124263c1a7de11a21960e91d",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-5561",
+      "studentName": "سلطان القحطاني",
+      "examId": "EXM-LINALG-301",
+      "examName": "الامتحان النهائي للجبر الخطي",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 90,
+      "startTime": "2026-06-16T06:07:34.288Z",
+      "endTime": "2026-06-16T06:07:34.288Z",
+      "durationMinutes": 88,
+      "scorePercent": 45,
+      "copyCount": 0,
+      "pasteCount": 0,
+      "tabSwitchesCount": 1,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "10.22.4.50"
+      ],
+      "mouseOutSeconds": 2,
+      "outOfBoundsCount": 1,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 1500,
+          "changesCount": 6,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 1800,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "b0feac8533562544fbefda4eb1713fb0e84fcb72ac25e283b10a0e581565c5d8",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-8891",
+      "studentName": "عبدالرحمن الشمري",
+      "examId": "EXM-SEC-401",
+      "examName": "إختبار هندسة الأمن السيبراني النهائي",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T03:07:34.288Z",
+      "endTime": "2026-06-16T03:19:34.288Z",
+      "durationMinutes": 12,
+      "scorePercent": 95,
+      "copyCount": 14,
+      "pasteCount": 12,
+      "tabSwitchesCount": 18,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-06-16T03:12:34.288Z",
+          "durationSeconds": 4
+        },
+        {
+          "timestamp": "2026-06-16T03:14:14.288Z",
+          "durationSeconds": 15
+        },
+        {
+          "timestamp": "2026-06-16T03:19:14.288Z",
+          "durationSeconds": 32
+        }
+      ],
+      "ipAddresses": [
+        "192.168.1.150"
+      ],
+      "mouseOutSeconds": 180,
+      "outOfBoundsCount": 15,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 15,
+          "changesCount": 0,
+          "copyCount": 2,
+          "pasteCount": 2
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 8,
+          "changesCount": 0,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 12,
+          "changesCount": 0,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 21,
+          "changesCount": 1,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 14,
+          "changesCount": 0,
+          "copyCount": 10,
+          "pasteCount": 8
+        }
+      ],
+      "signature": "0e7db8f105ef27cdb1e10cd7a69addcaa52663e0187dfcd248da5eae2b95f197",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-4412",
+      "studentName": "سارة الغامدي",
+      "examId": "EXM-SEC-401",
+      "examName": "إختبار هندسة الأمن السيبراني النهائي",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T03:37:34.288Z",
+      "endTime": "2026-06-16T04:31:34.288Z",
+      "durationMinutes": 54,
+      "scorePercent": 88,
+      "copyCount": 1,
+      "pasteCount": 0,
+      "tabSwitchesCount": 1,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-06-16T06:07:34.288Z",
+          "durationSeconds": 2
+        }
+      ],
+      "ipAddresses": [
+        "10.0.4.15"
+      ],
+      "mouseOutSeconds": 8,
+      "outOfBoundsCount": 1,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 540,
+          "changesCount": 2,
+          "copyCount": 1,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 610,
+          "changesCount": 3,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 490,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 800,
+          "changesCount": 4,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 600,
+          "changesCount": 2,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "bbc8aa044f29afc81bc198e4ede8c420e448d2f639ac8e608320b01719843dde",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-3329",
+      "studentName": "خالد الحربي",
+      "examId": "EXM-SEC-401",
+      "examName": "إختبار هندسة الأمن السيبراني النهائي",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T04:37:34.288Z",
+      "endTime": "2026-06-16T04:55:34.288Z",
+      "durationMinutes": 18,
+      "scorePercent": 100,
+      "copyCount": 2,
+      "pasteCount": 2,
+      "tabSwitchesCount": 0,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "192.168.1.150"
+      ],
+      "mouseOutSeconds": 0,
+      "outOfBoundsCount": 0,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 120,
+          "changesCount": 0,
+          "copyCount": 2,
+          "pasteCount": 2
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 200,
+          "changesCount": 1,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 150,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 310,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 300,
+          "changesCount": 0,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "8aa13dfa0c373169f504a8cc8d22243f3e4ca32b733f309b09a942bf21972283",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-1120",
+      "studentName": "نورة السبيعي",
+      "examId": "EXM-SEC-401",
+      "examName": "إختبار هندسة الأمن السيبراني النهائي",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-06-16T06:07:34.288Z",
+      "endTime": "2026-06-16T06:07:34.288Z",
+      "durationMinutes": 50,
+      "scorePercent": 82,
+      "copyCount": 0,
+      "pasteCount": 0,
+      "tabSwitchesCount": 1,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "109.82.114.50"
+      ],
+      "mouseOutSeconds": 12,
+      "outOfBoundsCount": 2,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 420,
+          "changesCount": 2,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 590,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "b72c314bfbc5bb051fb97a7a1e32abcd11450ec78f9d211e275f5b14673b71b5",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-1025",
+      "studentName": "فيصل العتيبي",
+      "examId": "EXM-NET-201",
+      "examName": "مقدمة في تصميم الشبكات والبروتوكولات",
+      "examDifficulty": "medium",
+      "examTimeLimitMinutes": 45,
+      "startTime": "2026-06-16T05:07:34.288Z",
+      "endTime": "2026-06-16T05:43:34.288Z",
+      "durationMinutes": 36,
+      "scorePercent": 74,
+      "copyCount": 5,
+      "pasteCount": 4,
+      "tabSwitchesCount": 8,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-06-16T06:07:34.288Z",
+          "durationSeconds": 12
+        },
+        {
+          "timestamp": "2026-06-16T06:07:34.288Z",
+          "durationSeconds": 8
+        }
+      ],
+      "ipAddresses": [
+        "192.168.10.82"
+      ],
+      "mouseOutSeconds": 72,
+      "outOfBoundsCount": 6,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 300,
+          "changesCount": 1,
+          "copyCount": 2,
+          "pasteCount": 2
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 450,
+          "changesCount": 3,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 520,
+          "changesCount": 2,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q4",
+          "questionNumber": 4,
+          "timeSpentSeconds": 440,
+          "changesCount": 1,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q5",
+          "questionNumber": 5,
+          "timeSpentSeconds": 450,
+          "changesCount": 1,
+          "copyCount": 1,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "7dd830bbe4f008e552a24881bbf879fab38595bbf0d32c4da052420213077766",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-7714",
+      "studentName": "ريم الدوسري",
+      "examId": "EXM-NET-201",
+      "examName": "مقدمة في تصميم الشبكات والبروتوكولات",
+      "examDifficulty": "medium",
+      "examTimeLimitMinutes": 45,
+      "startTime": "2026-06-16T06:07:34.288Z",
+      "endTime": "2026-06-16T06:07:34.288Z",
+      "durationMinutes": 41,
+      "scorePercent": 91,
+      "copyCount": 0,
+      "pasteCount": 0,
+      "tabSwitchesCount": 1,
+      "tabSwitchesTimeline": [],
+      "ipAddresses": [
+        "192.168.10.85"
+      ],
+      "mouseOutSeconds": 15,
+      "outOfBoundsCount": 2,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 420,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 510,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 490,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "signature": "90035c4a75f9c161ae4acf790c5e1ff33ee8d7522d7f93765a3459ea5b58df1a",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-2023-9932",
+      "studentName": "فهد العنزي",
+      "examId": "EXM-NET-201",
+      "examName": "مقدمة في تصميم الشبكات والبروتوكولات",
+      "examDifficulty": "medium",
+      "examTimeLimitMinutes": 45,
+      "startTime": "2026-06-16T06:07:34.288Z",
+      "endTime": "2026-06-16T06:07:34.288Z",
+      "durationMinutes": 15,
+      "scorePercent": 88,
+      "copyCount": 6,
+      "pasteCount": 5,
+      "tabSwitchesCount": 11,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-06-16T06:07:34.288Z",
+          "durationSeconds": 24
+        }
+      ],
+      "ipAddresses": [
+        "192.168.10.82"
+      ],
+      "mouseOutSeconds": 88,
+      "outOfBoundsCount": 9,
+      "questionTelemetry": [
+        {
+          "questionId": "Q1",
+          "questionNumber": 1,
+          "timeSpentSeconds": 120,
+          "changesCount": 0,
+          "copyCount": 2,
+          "pasteCount": 2
+        },
+        {
+          "questionId": "Q2",
+          "questionNumber": 2,
+          "timeSpentSeconds": 150,
+          "changesCount": 0,
+          "copyCount": 1,
+          "pasteCount": 1
+        },
+        {
+          "questionId": "Q3",
+          "questionNumber": 3,
+          "timeSpentSeconds": 110,
+          "changesCount": 0,
+          "copyCount": 4,
+          "pasteCount": 3
+        }
+      ],
+      "signature": "b490727c8f2aa3182d32aa264af4041c758f97cbec74d07f9d6685b0c5bef21e",
+      "isEncrypted": false
+    },
+    {
+      "studentId": "STD-MOODLE-42",
+      "studentName": "Ali Hassan",
+      "examId": "EXM-MOODLE-5",
+      "examName": "Midterm Calculus",
+      "examDifficulty": "hard",
+      "examTimeLimitMinutes": 60,
+      "startTime": "2026-05-04T15:45:10.123Z",
+      "endTime": "2026-05-04T15:46:30.456Z",
+      "durationMinutes": 2,
+      "scorePercent": 78,
+      "copyCount": 0,
+      "pasteCount": 0,
+      "tabSwitchesCount": 1,
+      "tabSwitchesTimeline": [
+        {
+          "timestamp": "2026-05-04T15:46:30.456Z",
+          "durationSeconds": 6
+        }
+      ],
+      "ipAddresses": [
+        "127.0.0.1"
+      ],
+      "mouseOutSeconds": 0,
+      "outOfBoundsCount": 1,
+      "questionTelemetry": [
+        {
+          "questionId": "q-5678",
+          "questionNumber": 3,
+          "timeSpentSeconds": 45,
+          "changesCount": 1,
+          "copyCount": 0,
+          "pasteCount": 0
+        }
+      ],
+      "sessionId": "sess_5_42",
+      "session_id": "sess_5_42",
+      "signature": "3ce1d3953531529cb1b295b67f24d6add79da39401193d692e73b8f199a26a62"
+    }
+  ],
+  "studentVerdicts": {},
+  "events": [
+    {
+      "received_at": "2026-06-16T06:27:00.017Z",
+      "client_ip": "127.0.0.1",
+      "event": {
+        "source": {
+          "layer": "plugin",
+          "component": "moodle",
+          "plugin": "exam_integrity"
+        },
+        "moodle": {
+          "quiz": {
+            "course": {
+              "id": "3",
+              "fullname": "Calculus 101"
+            },
+            "attempt_id": "attempt-789",
+            "name": "Midterm Calculus",
+            "id": "5"
+          },
+          "student": {
+            "email": "ali@student.edu",
+            "fullname": "Ali Hassan",
+            "id": "42"
+          }
+        },
+        "metadata": {
+          "question": {
+            "question_type": "multichoice",
+            "question_number": 3,
+            "old_answer": "B",
+            "new_answer": "C",
+            "question_dom_id": "q-5678"
+          }
+        },
+        "event_type": "answer_changed",
+        "session_id": "sess_5_42",
+        "timestamp": "2026-05-04T15:45:10.123Z",
+        "event_id": "evt-001-test",
+        "elapsed_ms": 45000,
+        "sequence_number": 1
+      }
+    },
+    {
+      "received_at": "2026-06-16T06:27:53.720Z",
+      "client_ip": "127.0.0.1",
+      "event": {
+        "source": {
+          "layer": "plugin",
+          "component": "moodle",
+          "plugin": "exam_integrity"
+        },
+        "moodle": {
+          "quiz": {
+            "course": {
+              "id": "3"
+            },
+            "attempt_id": "attempt-789",
+            "name": "Midterm Calculus",
+            "id": "5"
+          },
+          "student": {
+            "id": "42",
+            "fullname": "Ali Hassan"
+          }
+        },
+        "metadata": {},
+        "event_type": "window_blur",
+        "session_id": "sess_5_42",
+        "browser": {
+          "viewport": "1920x1080",
+          "language": "en-US",
+          "user_agent": "Mozilla/5.0"
+        },
+        "timestamp": "2026-05-04T15:46:30.456Z",
+        "event_id": "evt-002-blur",
+        "elapsed_ms": 90000,
+        "sequence_number": 2
+      }
+    }
+  ],
+  "proctorRules": [
+    {
+      "id": "rule_ip",
+      "nameAr": "تطابق الـ IP وتعارض الشبكة",
+      "nameEn": "IP Address Collision / Shared Network",
+      "enabled": true,
+      "baseWeight": 30,
+      "metricKey": "ip_conflict",
+      "conditionFormula": "sharedIpCount > 0",
+      "descriptionAr": "يحدث عند جلوس طالبين أو أكثر في نفس الشبكة أو الموقع لمكافحة الحل المشترك.",
+      "descriptionEn": "Triggers when multiple students share exact matching IP addresses during active exam."
+    },
+    {
+      "id": "rule_tabs",
+      "nameAr": "تبديل النوافذ ومغادرة المتصفح (Moodle Focus Loss)",
+      "nameEn": "Browser Tab Switching / Focus Loss",
+      "enabled": true,
+      "baseWeight": 10,
+      "metricKey": "tab_switches",
+      "conditionFormula": "tabSwitchesCount > 0",
+      "descriptionAr": "الخروج المتكرر من تبويب الامتحان النشط، يزيد تراكميا أو شريطة تكراره.",
+      "descriptionEn": "Triggers when candidates navigate away from active exam browser tab."
+    },
+    {
+      "id": "rule_copy_paste",
+      "nameAr": "عمليات النسخ واللصق المفرطة",
+      "nameEn": "Excessive Copy & Paste Abuse",
+      "enabled": true,
+      "baseWeight": 10,
+      "metricKey": "copy_paste",
+      "conditionFormula": "copyCount + pasteCount > 3",
+      "descriptionAr": "استيراد نصوص خارجية أو نسخ الأسئلة للاستعانة ببوابات ذكاء اصطناعي خارجية.",
+      "descriptionEn": "Triggers when copy/paste operations exceed a defined baseline standard."
+    },
+    {
+      "id": "rule_ai_gen",
+      "nameAr": "الاستعانة بالذكاء الاصطناعي لتوليد الإجابات",
+      "nameEn": "AI-Generated Answer Suspected",
+      "enabled": true,
+      "baseWeight": 20,
+      "metricKey": "ai_generated",
+      "conditionFormula": "aiProbability > 50",
+      "descriptionAr": "تولد الإجابات تلقائياً بمساعدة نماذج توليدية، ما يزيد من احتمالية الغش بمقدار 20%.",
+      "descriptionEn": "Triggers if student response patterns indicate automated language generation (adds 20% risk)."
+    },
+    {
+      "id": "rule_rapid",
+      "nameAr": "سرعة التسليم الفائقة وغير المتناسبة",
+      "nameEn": "Unreasonable Completion Velocity",
+      "enabled": true,
+      "baseWeight": 25,
+      "metricKey": "rapid_completion",
+      "conditionFormula": "completionRatio < 0.25 && score >= 85%",
+      "descriptionAr": "إنهاء ورقة الإجابة بوقت ضئيل جداً لا يتناسب مع طبيعة الأسئلة وصعوبتها الأكاديمية.",
+      "descriptionEn": "Triggers when high exam scores are completed in a fraction of normal session runtime."
+    },
+    {
+      "id": "rule_focus",
+      "nameAr": "فقدان تركيز الماوس / الخروج عن الحدود",
+      "nameEn": "Mouse Out Of Boundaries Duration",
+      "enabled": true,
+      "baseWeight": 15,
+      "metricKey": "focus_out",
+      "conditionFormula": "mouseOutSeconds > 45 || outOfBoundsCount > 8",
+      "descriptionAr": "تحرك مؤشر الفأرة بشكل مريب خارج نطاق إطار الحل النشط أو مغادرة الشاشة.",
+      "descriptionEn": "Triggers when mouse movement resides outside the exam window boundaries."
+    },
+    {
+      "id": "rule_rapid_questions",
+      "nameAr": "حل الأسئلة بسرعة مفرطة متتالية",
+      "nameEn": "Rapid Question-by-Question Submissions",
+      "enabled": true,
+      "baseWeight": 15,
+      "metricKey": "rapid_questions",
+      "conditionFormula": "rapidQuestionsCount >= 3",
+      "descriptionAr": "حل دقيق لأسئلة فرعية متعددة متتالية في أقل من خمس ثوانٍ للفرع الواحد دون تردد.",
+      "descriptionEn": "Triggers when multiple distinct questions are solved in an extremely low duration interval."
+    },
+    {
+      "id": "rule_macro",
+      "nameAr": "نقرات مكثفة تلمح لأتمتة مدخلات ماكرو",
+      "nameEn": "Macro-like Input Automation",
+      "enabled": true,
+      "baseWeight": 20,
+      "metricKey": "macro_usage",
+      "conditionFormula": "isMacroPatternsDetected == true",
+      "descriptionAr": "وجود نقرات سريعة بمعدلات ترددية آلية تلمح لنصوص تم توليدها بالآلة أو بأداة نقر برمجية.",
+      "descriptionEn": "Triggers if keyboard or mouse input speed presents mechanical click-rate sequences."
+    }
+  ],
+  "timingConfig": {
+    "easyBaseMinutesPerQuestion": 2,
+    "mediumBaseMinutesPerQuestion": 5,
+    "hardBaseMinutesPerQuestion": 8,
+    "teacherTimeAdjustment": 1
+  },
+  "copyPasteConfig": {
+    "maxRiskPoints": 20,
+    "chatGPTPatternThreshold": 1,
+    "abusedMultiplier": 0.2
+  },
+  "anomalyWeights": {
+    "tabSwitch": 4,
+    "paste": 2,
+    "copy": 1,
+    "ipConflict": 30,
+    "aiGenerated": 20,
+    "rapidCompletion": 25,
+    "focusOut": 15,
+    "rapidQuestions": 15,
+    "macroUsage": 20
+  }
+}

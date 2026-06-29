@@ -1,0 +1,374 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Tajawal", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base font-weight bump for Tajawal on light backgrounds */
+body:not(.theme-light) {
+  font-weight: 400;
+}
+.theme-light {
+  font-weight: 500;
+}
+
+/* ==========================================================
+   LIGHT MODE THEME — Tailwind v4 CSS Custom Properties
+   Maps dark slate-XXX → light slate-(XXX-relative) for full
+   automatic compatibility with all Tailwind utility classes.
+   ========================================================== */
+.theme-light {
+  /* Page base: light background, dark text */
+  background-color: #f1f5f9;
+  color: #0f172a;
+
+  /* Font rendering improvements for light backgrounds */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
+  /* === SLATE PALETTE LIGHT MODE ===
+     Dark → Light mapping:
+     slate-950  → white        (cards, containers)
+     slate-900  → white        (primary bg)
+     slate-850  → slate-100    (hover, secondary bg)
+     slate-800  → slate-200    (borders)
+     slate-750  → slate-300    (subtle borders)
+     slate-700  → slate-300    
+     slate-650  → slate-400    
+     slate-600  → slate-500    (secondary text)
+     slate-500  → slate-600    (body text)
+     slate-450  → slate-700    (high emphasis)
+     slate-400  → slate-800    (headings)
+     slate-300  → slate-900    (strong text)
+     slate-200  → slate-950    (extra strong)
+     slate-100  → #0f172a      
+     slate-50   → #0f172a      
+  */
+  --color-slate-950: #ffffff;
+  --color-slate-900: #ffffff;
+  --color-slate-850: #f1f5f9;
+  --color-slate-800: #e2e8f0;
+  --color-slate-750: #cbd5e1;
+  --color-slate-700: #cbd5e1;
+  --color-slate-650: #94a3b8;
+  --color-slate-600: #64748b;
+  --color-slate-500: #475569;
+  --color-slate-450: #334155;
+  --color-slate-400: #1e293b;
+  --color-slate-350: #0f172a;
+  --color-slate-300: #0f172a;
+  --color-slate-200: #0f172a;
+  --color-slate-100: #0f172a;
+  --color-slate-50:  #0f172a;
+}
+
+/* === FONT WEIGHT ENHANCEMENTS FOR LIGHT MODE === */
+.theme-light {
+  /* Tajawal appears lighter on white, bump up font-weight */
+  --tw-font-weight-normal: 400;
+}
+
+.theme-light .font-thin { font-weight: 300 !important; }
+.theme-light .font-light { font-weight: 400 !important; }
+.theme-light .font-normal { font-weight: 400 !important; }
+.theme-light .font-medium { font-weight: 500 !important; }
+.theme-light .font-semibold { font-weight: 600 !important; }
+.theme-light .font-bold { font-weight: 700 !important; }
+.theme-light .font-extrabold { font-weight: 800 !important; }
+.theme-light .font-black { font-weight: 900 !important; }
+
+/* Headings - always high contrast */
+.theme-light h1,
+.theme-light h2,
+.theme-light h3,
+.theme-light h4,
+.theme-light h5,
+.theme-light h6 {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+/* Override text-white on light backgrounds (except on colored buttons/badges) */
+.theme-light .text-white:not(button):not(.bg-blue-600 *):not(.bg-purple-600 *):not(.bg-rose-600 *):not(.bg-emerald-600 *):not(.bg-red-600 *):not(.bg-red-950 *):not(.bg-red-900 *):not([class*="bg-indigo-"]):not(.bg-amber-600 *):not(.bg-orange-600 *) {
+  color: #0f172a !important;
+}
+
+/* Sidebar & navigation text */
+.theme-light nav span,
+.theme-light aside span {
+  color: #334155 !important;
+}
+
+/* Toast notifications */
+.theme-light [class*="toast"] {
+  color: #0f172a !important;
+}
+
+/* Form elements */
+.theme-light select,
+.theme-light input[type="text"],
+.theme-light input[type="password"],
+.theme-light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.theme-light select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+/* kbd (keyboard tags) */
+.theme-light kbd {
+  background-color: #e2e8f0 !important;
+  color: #1e293b !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Table rows */
+.theme-light table tbody tr {
+  background-color: #ffffff;
+}
+.theme-light table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Selected row ring */
+.theme-light .ring-2.ring-blue-500 {
+  --tw-ring-color: #93c5fd !important;
+}
+
+/* Colored badge backgrounds — light tint variants */
+.theme-light .bg-red-500\/10 { background-color: #fef2f2 !important; }
+.theme-light .bg-red-500\/20 { background-color: #fef2f2 !important; }
+.theme-light .bg-red-950\/40 { background-color: #fef2f2 !important; }
+.theme-light .bg-emerald-500\/10 { background-color: #f0fdf4 !important; }
+.theme-light .bg-emerald-500\/20 { background-color: #f0fdf4 !important; }
+.theme-light .bg-amber-500\/10 { background-color: #fffbeb !important; }
+.theme-light .bg-amber-500\/20 { background-color: #fffbeb !important; }
+.theme-light .bg-rose-500\/10 { background-color: #fff1f2 !important; }
+.theme-light .bg-rose-950\/40 { background-color: #fff1f2 !important; }
+.theme-light .bg-purple-500\/10 { background-color: #faf5ff !important; }
+.theme-light .bg-purple-500\/15 { background-color: #faf5ff !important; }
+.theme-light .bg-purple-500\/20 { background-color: #faf5ff !important; }
+.theme-light .bg-blue-500\/10 { background-color: #eff6ff !important; }
+.theme-light .bg-blue-500\/20 { background-color: #eff6ff !important; }
+.theme-light .bg-pink-500\/10 { background-color: #fdf2f8 !important; }
+.theme-light .bg-orange-500\/10 { background-color: #fff7ed !important; }
+
+/* Animated pulse backgrounds */
+.theme-light .animate-pulse.bg-rose-500\/10 { background-color: #fff1f2 !important; }
+.theme-light .animate-pulse.bg-red-400\/10 { background-color: #fef2f2 !important; }
+
+/* Comparison mode cell background */
+.theme-light .bg-purple-900\/60 {
+  background-color: #faf5ff !important;
+}
+
+@keyframes row-ripple-glow {
+  0% {
+    box-shadow: inset 0 0 6px rgba(239, 68, 68, 0.15);
+    background-color: rgba(239, 68, 68, 0.02);
+  }
+  50% {
+    box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.35);
+    background-color: rgba(239, 68, 68, 0.08);
+  }
+  100% {
+    box-shadow: inset 0 0 6px rgba(239, 68, 68, 0.15);
+    background-color: rgba(239, 68, 68, 0.02);
+  }
+}
+
+@keyframes border-pulse-glow {
+  0% {
+    box-shadow: 0 0 2px rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.7);
+    border-color: rgba(239, 68, 68, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 2px rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+}
+
+.animate-row-ripple {
+  animation: row-ripple-glow 2s infinite ease-in-out;
+  border-left: 4px solid #ef4444 !important;
+}
+
+.animate-row-ripple-rtl {
+  animation: row-ripple-glow 2s infinite ease-in-out;
+  border-right: 4px solid #ef4444 !important;
+}
+
+.animate-border-pulse-red {
+  animation: border-pulse-glow 1.5s infinite ease-in-out;
+}
+
+/* ==========================================================
+   PRINT FRIENDLY STYLING (Forensic Incident Inspector & Comparison)
+   ========================================================== */
+@media print {
+  /* Establish clean light-mode print foundation */
+  html, body {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Force hide all standard UI shell, navigation, panels & settings */
+  nav,
+  header,
+  aside,
+  footer,
+  iframe,
+  #student-roster-sidebar,
+  #controls-container,
+  #moodle-event-gateway,
+  #sandbox-simulator,
+  #dashboard-summary-cards,
+  #temporal-heatmap-container,
+  #rules-settings-layout,
+  .no-print,
+  .toast-container,
+  button {
+    display: none !important;
+  }
+
+  /* Make sure background modals are NOT positioned fixed or background-blurred */
+  #student-comparison-modal-backdrop {
+    position: static !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    display: block !important;
+    z-index: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto !important;
+  }
+
+  /* Optimize modal container for continuous paper layout */
+  .print-section {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    padding: 20px !important;
+    margin: 10px auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Convert all child borders, text and panels to clean high-contrast dark gray */
+  .print-section,
+  .print-section *,
+  #forensic-inspector,
+  #forensic-inspector *,
+  #printable-comparison,
+  #printable-comparison * {
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    border-color: #94a3b8 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Maintain layout colors for accents and critical badges */
+  .print-section .text-red-400,
+  .print-section .text-red-500,
+  .print-section .text-rose-500 {
+    color: #b91c1c !important; /* Rich Dark Red for Printing */
+    font-weight: 800 !important;
+  }
+
+  .print-section .text-emerald-400,
+  .print-section .text-emerald-500 {
+    color: #15803d !important; /* Rich Dark Green for Printing */
+    font-weight: 800 !important;
+  }
+
+  .print-section .bg-rose-950\/80,
+  .print-section .bg-red-950\/80 {
+    background-color: #fef2f2 !important;
+    border: 1px solid #fee2e2 !important;
+  }
+
+  .print-section .bg-emerald-950\/80 {
+    background-color: #f0fdf4 !important;
+    border: 1px solid #dcfce7 !important;
+  }
+
+  /* Grid layout modifications to display tables and split grids nicely on standard width */
+  .print-section .grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  }
+
+  /* Ensure page breaks do not split mid-dossier card or table */
+  .print-section,
+  .page-break-avoid {
+    page-break-inside: avoid !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid !important;
+  }
+}
+
+/* Ensure all Arabic text and pages in Arabic strictly use the Tajawal font */
+[lang="ar"], [lang="ar"] *, [dir="rtl"], [dir="rtl"] * {
+  font-family: "Tajawal", "Inter", system-ui, -apple-system, sans-serif !important;
+}
+
+/* Permit monospace for code, graphs or numbers, but fallback to Tajawal for any Arabic symbols */
+[lang="ar"] .font-mono, [lang="ar"] code, [lang="ar"] pre,
+[dir="rtl"] .font-mono, [dir="rtl"] code, [dir="rtl"] pre {
+  font-family: "JetBrains Mono", "Tajawal", ui-monospace, SFMono-Regular, monospace !important;
+}
+
+/* Enforce suitable Tajawal font weights for standard elements (400, 500, 700, 800) under RTL */
+[lang="ar"], [dir="rtl"] {
+  font-weight: 400;
+}
+[lang="ar"] b, [dir="rtl"] b, 
+[lang="ar"] strong, [dir="rtl"] strong, 
+[lang="ar"] .font-bold, [dir="rtl"] .font-bold {
+  font-weight: 700 !important;
+}
+[lang="ar"] .font-medium, [dir="rtl"] .font-medium,
+[lang="ar"] .font-semibold, [dir="rtl"] .font-semibold {
+  font-weight: 500 !important;
+}
+[lang="ar"] .font-extrabold, [dir="rtl"] .font-extrabold,
+[lang="ar"] .font-black, [dir="rtl"] .font-black {
+  font-weight: 800 !important;
+}
+
+
