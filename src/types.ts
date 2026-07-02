@@ -93,3 +93,25 @@ export interface CopyPasteConfig {
   abusedMultiplier: number;
 }
 
+export interface Teacher {
+  id: string;
+  nameAr: string;
+  nameEn: string;
+}
+
+export interface Subject {
+  id: string;
+  teacherId: string;
+  nameAr: string;
+  nameEn: string;
+}
+
+export interface Exam {
+  id: string;
+  subjectId: string;
+  nameAr: string;
+  nameEn: string;
+  difficulty: ExamDifficulty;
+  timeLimit: number;
+}
+

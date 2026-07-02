@@ -1,4 +1,4 @@
-import { X, Scale, ShieldAlert, CheckCircle2, AlertTriangle, HelpCircle, Network, Copy, MousePointer, Printer } from 'lucide-react';
+import { X, Scale, ShieldAlert, Network, Copy, MousePointer, Printer } from 'lucide-react';
 import { TelemetryPayload, AnomalyReport } from '../types';
 import IntegrityProfile from './IntegrityProfile';
 

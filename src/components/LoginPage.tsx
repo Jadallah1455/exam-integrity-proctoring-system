@@ -13,7 +13,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
-  const [isLightMode, _] = useState(() => document.documentElement.classList.contains('theme-light'));
+  const [isLightMode] = useState(() => document.documentElement.classList.contains('theme-light'));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

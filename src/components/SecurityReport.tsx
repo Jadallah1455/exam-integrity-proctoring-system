@@ -16,7 +16,7 @@ interface SecurityReportProps {
   lang?: 'ar' | 'en';
 }
 
-export default function SecurityReport({ studentId, studentName, reportData, onClose, lang = 'ar' }: SecurityReportProps) {
+export default function SecurityReport({ studentId, studentName: _studentName, reportData: _reportData, onClose: _onClose, lang = 'ar' }: SecurityReportProps) {
   const [reportText, setReportText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

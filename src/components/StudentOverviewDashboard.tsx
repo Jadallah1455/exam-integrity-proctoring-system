@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   TrendingUp,
   AlertTriangle,
@@ -9,8 +9,6 @@ import {
   Activity,
   FileText,
   MousePointer,
-  Keyboard,
-  Globe,
   Calendar,
   X,
   Timer,
@@ -44,59 +42,18 @@ interface StudentOverviewProps {
   analyses: AnomalyReport[];
   onClose?: () => void;
   lang: 'ar' | 'en';
+  isLightMode: boolean;
 }
 
-export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
+export function StudentOverviewDashboard({
   studentId,
   submissions,
   analyses,
   onClose,
-  lang
-}) => {
+  lang,
+  isLightMode
+}: StudentOverviewProps) {
   const isAr = lang === 'ar';
-
-  const CustomTimeTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const actual = payload[0]?.value;
-      const expected = payload[1]?.value;
-      const ratio = actual / (expected || 60);
-      const isAnomaly = actual < 15 || ratio < 0.2 || ratio > 1.8;
-      
-      let statusText = isAr ? 'طبيعي' : 'Normal';
-      let statusColor = 'text-indigo-400';
-      if (isAnomaly) {
-        statusColor = 'text-rose-400 font-bold';
-        if (actual < 15) {
-          statusText = isAr ? 'انحراف: حل سريع للغاية (< ١٥ ثانية)' : 'Deviation: Extremely Rapid (< 15s)';
-        } else if (ratio < 0.2) {
-          statusText = isAr ? 'انحراف: سرعة مفرطة مقارنة بالتقدير' : 'Deviation: Excessively Fast vs Estimate';
-        } else {
-          statusText = isAr ? 'انحراف: تأخير مفرط / توقف' : 'Deviation: Excessively Slow / Idle';
-        }
-      }
-
-      return (
-        <div className="bg-slate-950 border border-slate-800 p-3 rounded-xl shadow-xl text-[11px] font-mono">
-          <p className="text-white font-black mb-1.5 border-b border-slate-850 pb-1">{label}</p>
-          <div className="space-y-1">
-            <p className="text-slate-300">
-              {isAr ? 'الزمن الفعلي:' : 'Actual Time:'}{' '}
-              <span className="text-indigo-300 font-bold">{actual}s</span>
-            </p>
-            <p className="text-slate-300">
-              {isAr ? 'الزمن المقدر للمعلم:' : 'Teacher Target:'}{' '}
-              <span className="text-amber-400 font-bold">{expected}s</span>
-            </p>
-            <div className="border-t border-slate-850 pt-1.5 mt-1.5 flex items-center gap-1">
-              <span className="text-slate-400">{isAr ? 'الحالة:' : 'Verdict:'}</span>
-              <span className={statusColor}>{statusText}</span>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
 
   const [timingConfig, setTimingConfig] = useState({
     easyBaseMinutesPerQuestion: 2,
@@ -134,6 +91,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
   
   const latestSub = studentSubmissions[studentSubmissions.length - 1];
   const latestAnalysis = studentAnalyses[studentAnalyses.length - 1];
+  const baseTimeMs = latestSub?.startTime ? new Date(latestSub.startTime).getTime() : 0;
   
   const studentName = latestSub?.studentName || latestAnalysis?.studentName || studentId;
 
@@ -374,9 +332,9 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
   const questionDetails = latestSub?.questionTelemetry || [];
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl space-y-6">
+    <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-800'} rounded-xl overflow-hidden shadow-2xl space-y-6`}>
       {/* Top Banner header */}
-      <div className="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center">
+      <div className={`${isLightMode ? 'bg-white' : 'bg-slate-950'} p-5 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} flex justify-between items-center`}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
             <User className="w-5 h-5" />
@@ -385,9 +343,9 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
             <span className="text-[10px] uppercase font-mono tracking-widest text-[#6366f1] font-bold block mb-0.5">
               {isAr ? 'نظرة عامة متكاملة للطالب' : 'Comprehensive Student Dossier'}
             </span>
-            <h2 className="text-md font-extrabold text-white flex items-center gap-2">
+            <h2 className={`text-md font-extrabold ${isLightMode ? 'text-slate-800' : 'text-white'} flex items-center gap-2`}>
               {studentName}
-              <span className="text-xs text-slate-500 font-mono font-normal">({studentId})</span>
+              <span className={`text-xs ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-mono font-normal`}>({studentId})</span>
             </h2>
           </div>
         </div>
@@ -404,7 +362,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
           {onClose && (
             <button 
               onClick={onClose}
-              className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800/60 transition cursor-pointer"
+              className={`${isLightMode ? 'text-slate-500 hover:text-slate-800 hover:bg-slate-100' : 'text-slate-400 hover:text-white hover:bg-slate-800/60'} p-1.5 rounded-lg transition cursor-pointer`}
             >
               <X className="w-4 h-4" />
             </button>
@@ -415,25 +373,25 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
       <div className="p-5 space-y-6">
         {/* Core Summary Stats Widgets */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-950/50 p-4 border border-slate-800/80 rounded-xl space-y-1 shadow-inner relative overflow-hidden group">
+          <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-950/50 border border-slate-800/80'} p-4 rounded-xl space-y-1 shadow-inner relative overflow-hidden group`}>
             <div className="absolute right-3 top-3 text-blue-500/10">
               <FileText className="w-12 h-12" />
             </div>
-            <span className="text-[10px] text-slate-500 font-bold block">
+            <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-bold block`}>
               {isAr ? 'إجمالي الامتحانات الحالية' : 'Total Exams Completed'}
             </span>
-            <div className="text-xl font-black text-white">{totalExams}</div>
-            <span className="text-[9px] text-slate-550 flex items-center gap-1">
+            <div className={`text-xl font-black ${isLightMode ? 'text-slate-800' : 'text-white'}`}>{totalExams}</div>
+            <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-550'} flex items-center gap-1`}>
               <Calendar className="w-2.5 h-2.5" />
               {isAr ? 'جلسات متتالية مسجلة' : 'Consecutive telemetry runs'}
             </span>
           </div>
 
-          <div className="bg-slate-950/50 p-4 border border-slate-800/80 rounded-xl space-y-1 shadow-inner relative overflow-hidden group">
+          <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-950/50 border border-slate-800/80'} p-4 rounded-xl space-y-1 shadow-inner relative overflow-hidden group`}>
             <div className="absolute right-3 top-3 text-emerald-500/10">
               <Award className="w-12 h-12" />
             </div>
-            <span className="text-[10px] text-slate-500 font-bold block">
+            <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-bold block`}>
               {isAr ? 'متوسط نسبة الدرجات' : 'Mean Score Percentage'}
             </span>
             <div className="text-xl font-black text-emerald-400">{avgScore}%</div>
@@ -442,38 +400,38 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
             </span>
           </div>
 
-          <div className="bg-slate-950/50 p-4 border border-slate-800/80 rounded-xl space-y-1 shadow-inner relative overflow-hidden group">
+          <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-950/50 border border-slate-800/80'} p-4 rounded-xl space-y-1 shadow-inner relative overflow-hidden group`}>
             <div className="absolute right-3 top-3 text-red-500/10">
               <AlertTriangle className="w-12 h-12" />
             </div>
-            <span className="text-[10px] text-slate-500 font-bold block">
+            <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-bold block`}>
               {isAr ? 'متوسط مؤشر الخطورة' : 'Average Integrity Threat'}
             </span>
-            <div className={`text-xl font-black ${avgRisk > 40 ? 'text-rose-400' : avgRisk > 15 ? 'text-amber-400' : 'text-slate-400'}`}>
+            <div className={`text-xl font-black ${avgRisk > 40 ? `${isLightMode ? 'text-rose-700' : 'text-rose-400'}` : avgRisk > 15 ? `${isLightMode ? 'text-amber-700' : 'text-amber-400'}` : `${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}`}>
               {avgRisk}%
             </div>
-            <span className="text-[9px] text-slate-500">
+            <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>
               {isAr ? 'مستخلص السجل بالخوارزمية' : 'Aggregated proctor average'}
             </span>
           </div>
 
-          <div className="bg-slate-950/50 p-4 border border-slate-800/80 rounded-xl space-y-1 shadow-inner relative overflow-hidden group">
+          <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-950/50 border border-slate-800/80'} p-4 rounded-xl space-y-1 shadow-inner relative overflow-hidden group`}>
             <div className="absolute right-3 top-3 text-purple-500/10">
               <Shield className="w-12 h-12" />
             </div>
-            <span className="text-[10px] text-slate-500 font-bold block">
+            <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-bold block`}>
               {isAr ? 'حالة النزاهة العامة' : 'Calculated Safety Verdict'}
             </span>
             <div className={`text-md font-black mt-2 inline-flex items-center px-2 py-0.5 rounded text-xs ${
               hasHighRisk 
-                ? 'bg-rose-500/10 text-rose-300 border border-rose-500/25' 
+                ? `${isLightMode ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-rose-500/10 text-rose-300 border border-rose-500/25'}`
                 : hasMediumRisk 
-                  ? 'bg-amber-500/10 text-amber-300 border border-amber-500/25' 
-                  : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'
+                  ? `${isLightMode ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-amber-500/10 text-amber-300 border border-amber-500/25'}`
+                  : `${isLightMode ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25'}`
             }`}>
               {overallRiskStatus}
             </div>
-            <span className="text-[9px] text-slate-550 block mt-1">
+            <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-550'} block mt-1`}>
               {isAr ? 'تقييم شامل متراكم' : 'Cross-session classification'}
             </span>
           </div>
@@ -482,9 +440,9 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
         {/* Detailed Timeline and Behavioral Radar charts */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Progress Timeline Chart */}
-          <div className="lg:col-span-8 bg-slate-950/40 p-4 rounded-xl border border-slate-800 space-y-3">
+          <div className={`lg:col-span-8 ${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-950/40 border border-slate-800'} p-4 rounded-xl space-y-3`}>
             <div className="flex justify-between items-center">
-              <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+              <h3 className={`text-xs font-bold ${isLightMode ? 'text-slate-800' : 'text-white'} flex items-center gap-1.5`}>
                 <TrendingUp className="w-4 h-4 text-blue-400" />
                 {isAr ? 'مقارنة التحصيل الدراسي مع معامل الخطورة' : 'Academic Scores vs Integrity Threat Trend'}
               </h3>
@@ -543,15 +501,15 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-64 flex items-center justify-center text-slate-500 text-xs font-mono">
+              <div className={`h-64 flex items-center justify-center ${isLightMode ? 'text-slate-400' : 'text-slate-500'} text-xs font-mono`}>
                 {isAr ? 'لا توجد تفاصيل كافية للرسم التخطيطي' : 'Insufficient historical data points'}
               </div>
             )}
           </div>
 
           {/* Behavioral Radar Vector */}
-          <div className="lg:col-span-4 bg-slate-950/40 p-4 rounded-xl border border-slate-800 space-y-3">
-            <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+          <div className={`lg:col-span-4 ${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-950/40 border border-slate-800'} p-4 rounded-xl space-y-3`}>
+            <h3 className={`text-xs font-bold ${isLightMode ? 'text-slate-800' : 'text-white'} flex items-center gap-1.5`}>
               <Activity className="w-4 h-4 text-purple-400" />
               {isAr ? 'توزيع الأنماط التفاعلية النشطة' : 'Micro-Anomaly Density Signature'}
             </h3>
@@ -573,7 +531,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                 </ResponsiveContainer>
               </div>
             ) : (
-              <div className="h-64 flex items-center justify-center text-slate-500 text-xs font-mono">
+              <div className={`h-64 flex items-center justify-center ${isLightMode ? 'text-slate-400' : 'text-slate-500'} text-xs font-mono`}>
                 {isAr ? 'بانتظار تسجيل فعاليات الطالب لتكوين الطيف' : 'Awaiting real-time micro-events'}
               </div>
             )}
@@ -582,13 +540,13 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
 
         {/* Detailed Attendance Log Table */}
         <div className="space-y-3">
-          <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
+          <h3 className={`text-xs font-bold ${isLightMode ? 'text-slate-800' : 'text-white'} flex items-center gap-1.5`}>
             <Calendar className="w-4 h-4 text-emerald-400" />
             {isAr ? 'سجل حضور الاختبارات وسلامة الجلسة' : 'Proctored Assessment Log & Session Attendance History'}
           </h3>
-          <div className="overflow-x-auto border border-slate-800/80 rounded-xl">
+          <div className={`overflow-x-auto border ${isLightMode ? 'border-slate-200' : 'border-slate-800/80'} rounded-xl`}>
             <table className={`w-full text-[11px] ${isAr ? 'text-right' : 'text-left'}`}>
-              <thead className="bg-slate-950 text-slate-400 border-b border-slate-850 font-bold">
+              <thead className={`${isLightMode ? 'bg-slate-100 text-slate-500 border-b border-slate-200' : 'bg-slate-950 text-slate-400 border-b border-slate-850'} font-bold`}>
                 <tr>
                   <th className="p-3">{isAr ? 'الاختبار' : 'Exam Name'}</th>
                   <th className="p-3">{isAr ? 'وقت البدء' : 'Session Start'}</th>
@@ -600,30 +558,30 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                   <th className="p-3">{isAr ? 'حضور الجلسة' : 'Attendance'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-850">
+              <tbody className={`divide-y ${isLightMode ? 'divide-slate-200' : 'divide-slate-850'}`}>
                 {attendanceSessions.map((session, sIdx) => (
-                  <tr key={sIdx} className="hover:bg-slate-850/40 text-slate-300">
-                    <td className="p-3 font-bold text-white">{session.name}</td>
-                    <td className="p-3 text-slate-400 font-mono">
+                  <tr key={sIdx} className={`${isLightMode ? 'hover:bg-slate-50' : 'hover:bg-slate-850/40'} ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                    <td className={`p-3 font-bold ${isLightMode ? 'text-slate-800' : 'text-white'}`}>{session.name}</td>
+                    <td className={`p-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-mono`}>
                       {new Date(session.startTime).toLocaleString(isAr ? 'ar-EG' : 'en-US', {
                         day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit'
                       })}
                     </td>
-                    <td className="p-3 text-slate-400">{session.duration} {isAr ? 'دقائق' : 'mins'}</td>
+                    <td className={`p-3 ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>{session.duration} {isAr ? 'دقائق' : 'mins'}</td>
                     <td className="p-3 font-bold text-emerald-400">{session.score}%</td>
                     <td className="p-3 font-mono text-indigo-300 font-bold">{session.ratio}</td>
                     <td className="p-3">
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
                         session.risk > 45 
-                          ? 'bg-red-500/10 text-red-400' 
+                          ? `${isLightMode ? 'bg-red-50 text-red-600' : 'bg-red-500/10 text-red-400'}`
                           : session.risk > 15 
-                            ? 'bg-amber-500/10 text-amber-400' 
-                            : 'bg-slate-800 text-slate-400'
+                            ? `${isLightMode ? 'bg-amber-50 text-amber-600' : 'bg-amber-500/10 text-amber-400'}`
+                            : `${isLightMode ? 'bg-slate-200 text-slate-500' : 'bg-slate-800 text-slate-400'}`
                       }`}>
                         {session.risk}%
                       </span>
                     </td>
-                    <td className="p-3 text-slate-500 font-mono">{session.ip}</td>
+                    <td className={`p-3 ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-mono`}>{session.ip}</td>
                     <td className="p-3">
                       <span className="text-emerald-500 flex items-center gap-1 font-bold">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -641,38 +599,38 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
         {latestSub && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
             {/* Interactive Stats and Keyboard profiling */}
-            <div className="bg-slate-950/40 p-4 rounded-xl border border-slate-800 space-y-4">
-              <h4 className="text-xs font-bold text-slate-200 flex items-center gap-1">
+            <div className={`${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-950/40 border border-slate-800'} p-4 rounded-xl space-y-4`}>
+              <h4 className={`text-xs font-bold ${isLightMode ? 'text-slate-700' : 'text-slate-200'} flex items-center gap-1`}>
                 <MousePointer className="w-3.5 h-3.5 text-blue-400" />
                 {isAr ? 'خصائص التفاعل للماوس وقنوات الإزعاج' : 'Mouse Interaction & Peripheral Noise Indicators'}
               </h4>
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-slate-900/50 p-2.5 rounded border border-slate-850">
-                  <span className="text-[9px] text-slate-550 block font-bold">{isAr ? 'تبديل النوافذ' : 'Tab Switches'}</span>
+                <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900/50 border border-slate-850'} p-2.5 rounded`}>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-550'} block font-bold`}>{isAr ? 'تبديل النوافذ' : 'Tab Switches'}</span>
                   <span className="text-sm font-extrabold text-blue-300">{latestSub.tabSwitchesCount}</span>
                 </div>
-                <div className="bg-slate-900/50 p-2.5 rounded border border-slate-850">
-                  <span className="text-[9px] text-slate-550 block font-bold">{isAr ? 'تجاوز الحدود' : 'Bounds Crossed'}</span>
+                <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900/50 border border-slate-850'} p-2.5 rounded`}>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-550'} block font-bold`}>{isAr ? 'تجاوز الحدود' : 'Bounds Crossed'}</span>
                   <span className="text-sm font-extrabold text-indigo-400">{latestSub.outOfBoundsCount}</span>
                 </div>
-                <div className="bg-slate-900/50 p-2.5 rounded border border-slate-850">
-                  <span className="text-[9px] text-slate-550 block font-bold">{isAr ? 'غياب المؤشر' : 'Cursor Left (s)'}</span>
+                <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900/50 border border-slate-850'} p-2.5 rounded`}>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-550'} block font-bold`}>{isAr ? 'غياب المؤشر' : 'Cursor Left (s)'}</span>
                   <span className="text-sm font-extrabold text-rose-400">{latestSub.mouseOutSeconds}س</span>
                 </div>
               </div>
 
               {/* Clipboard history summary */}
-              <div className="bg-slate-900/40 p-3 rounded border border-slate-850 flex items-center justify-between">
+              <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900/40 border border-slate-850'} p-3 rounded flex items-center justify-between`}>
                 <div>
-                  <span className="text-[10px] text-slate-500 block font-bold">{isAr ? 'محاولات تداول محتوى الحافظة' : 'Clipboard Feed Detection'}</span>
-                  <span className="text-xs text-slate-300">
+                  <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block font-bold`}>{isAr ? 'محاولات تداول محتوى الحافظة' : 'Clipboard Feed Detection'}</span>
+                  <span className={`text-xs ${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
                     {latestSub.copyCount} {isAr ? 'نسخ' : 'copies'} / {latestSub.pasteCount} {isAr ? 'لصق' : 'pastes'}
                   </span>
                 </div>
                 <span className={`text-[10px] uppercase font-mono px-2 py-0.5 rounded font-extrabold ${
                   latestSub.pasteCount > 2 
-                    ? 'bg-rose-500/10 text-rose-400' 
-                    : 'bg-emerald-500/10 text-emerald-400'
+                    ? `${isLightMode ? 'bg-rose-50 text-rose-700' : 'bg-rose-500/10 text-rose-400'}`
+                    : `${isLightMode ? 'bg-emerald-50 text-emerald-600' : 'bg-emerald-500/10 text-emerald-400'}`
                 }`}>
                   {latestSub.pasteCount > 2 ? (isAr ? 'اشتباه تلقين' : 'Suspicious pasting') : (isAr ? 'ضمن الحدود الآمنة' : 'Normal clip flow')}
                 </span>
@@ -680,33 +638,33 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
             </div>
 
             {/* Extended Time Analytics Dashboard & Plagiarism Calculator */}
-            <div className="bg-slate-950/40 p-4 rounded-xl border border-slate-800 space-y-4">
-              <div className="flex justify-between items-center border-b border-slate-850 pb-2">
+            <div className={`${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-950/40 border border-slate-800'} p-4 rounded-xl space-y-4`}>
+              <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pb-2`}>
                 <h4 className="text-xs font-black text-blue-400 flex items-center gap-1.5 uppercase">
                   <Clock className="w-4 h-4 animate-pulse text-blue-500" />
                   {isAr ? 'بيانات تتبع الوقت وتقديرات المدرس' : 'Advanced Exam Timeline & Dwell Metrics'}
                 </h4>
-                <span className="text-[9px] font-mono bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-bold">
+                <span className={`text-[9px] font-mono ${isLightMode ? 'bg-blue-50 text-blue-700' : 'bg-blue-500/10 text-blue-400'} px-2 py-0.5 rounded font-bold`}>
                   {latestSub.examDifficulty?.toUpperCase() || 'EASY'} EXAM
                 </span>
               </div>
 
               {/* Timing metrics comparison */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-slate-900 border border-slate-850">
-                  <span className="text-[10px] text-slate-500 block font-bold leading-none mb-1.5">{isAr ? 'الوقت الإجمالي المستهلك:' : 'Total Solved Time:'}</span>
-                  <span className="text-sm font-black text-white">{latestSub.durationMinutes || 0} دقيقة</span>
-                  <span className="text-[9px] text-slate-400 block mt-1">{isAr ? 'زمن إرسال الحلول' : 'Actual spent minutes'}</span>
+                <div className={`p-3 rounded-lg ${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-850'}`}>
+                  <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block font-bold leading-none mb-1.5`}>{isAr ? 'الوقت الإجمالي المستهلك:' : 'Total Solved Time:'}</span>
+                  <span className={`text-sm font-black ${isLightMode ? 'text-slate-800' : 'text-white'}`}>{latestSub.durationMinutes || 0} دقيقة</span>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} block mt-1`}>{isAr ? 'زمن إرسال الحلول' : 'Actual spent minutes'}</span>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-900 border border-slate-850">
-                  <span className="text-[10px] text-slate-500 block font-bold leading-none mb-1.5">{isAr ? 'حد وقت الامتحان الفعلي:' : 'Exam Standard Limit:'}</span>
+                <div className={`p-3 rounded-lg ${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-850'}`}>
+                  <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block font-bold leading-none mb-1.5`}>{isAr ? 'حد وقت الامتحان الفعلي:' : 'Exam Standard Limit:'}</span>
                   <span className="text-sm font-black text-amber-400">{latestSub.examTimeLimitMinutes || 45} دقيقة</span>
-                  <span className="text-[9px] text-slate-400 block mt-1">{isAr ? 'زمن الفصل القانوني' : 'Hard limit constraint'}</span>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} block mt-1`}>{isAr ? 'زمن الفصل القانوني' : 'Hard limit constraint'}</span>
                 </div>
 
-                <div className="p-3 rounded-lg bg-slate-900 border border-slate-850">
-                  <span className="text-[10px] text-slate-500 block font-bold leading-none mb-1.5">{isAr ? 'الزمن المقدر/المتوقع للحل:' : 'Expected Teacher Estimate:'}</span>
+                <div className={`p-3 rounded-lg ${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-850'}`}>
+                  <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block font-bold leading-none mb-1.5`}>{isAr ? 'الزمن المقدر/المتوقع للحل:' : 'Expected Teacher Estimate:'}</span>
                   <span className="text-sm font-black text-blue-400">
                     {(() => {
                       const qCount = questionDetails.length > 0 ? questionDetails.length : 5;
@@ -718,13 +676,13 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                       return Math.round(qCount * baseMin * timingConfig.teacherTimeAdjustment);
                     })()} دقيقة
                   </span>
-                  <span className="text-[9px] text-slate-400 block mt-1">{isAr ? `بمُعامل المعلم (${timingConfig.teacherTimeAdjustment}x)` : `Formula: Qs × Base × Coefficient (${timingConfig.teacherTimeAdjustment}x)`}</span>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} block mt-1`}>{isAr ? `بمُعامل المعلم (${timingConfig.teacherTimeAdjustment}x)` : `Formula: Qs × Base × Coefficient (${timingConfig.teacherTimeAdjustment}x)`}</span>
                 </div>
               </div>
 
               {/* Per-Question Timing & Plagiarism Counters */}
               <div className="space-y-2 pt-1">
-                <h5 className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-extrabold flex items-center gap-1">
+                <h5 className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-extrabold flex items-center gap-1`}>
                   <Timer className="w-3.5 h-3.5 text-indigo-400" />
                   <span>{isAr ? 'سجلات المكوث الزمني والنسخ لكل سؤال (تتبع ChatGPT):' : 'Per-Question Time, Copies & Pastes:'}</span>
                 </h5>
@@ -746,19 +704,19 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                       const isExtremelyRapid = q.timeSpentSeconds < 15;
 
                       return (
-                        <div key={qIndex} className="bg-slate-900 border border-slate-850 rounded-xl p-3 space-y-2.5">
+                        <div key={qIndex} className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-850'} rounded-xl p-3 space-y-2.5`}>
                           <div className="flex justify-between items-center text-xs">
                             <span className="font-extrabold text-blue-300">
                               {isAr ? `السؤال رقم ${q.questionNumber}` : `Question #${q.questionNumber}`}
                             </span>
                             <div className="flex items-center gap-2">
                               {isExtremelyRapid && (
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/10 animate-pulse font-extrabold">
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded ${isLightMode ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-amber-500/15 text-amber-400 border border-amber-500/10'} animate-pulse font-extrabold`}>
                                   {isAr ? '⚡ حل سريع وربما ملقن' : '⚡ Speedy Solve'}
                                 </span>
                               )}
                               {hasChatGPTLoop && (
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 border border-red-500/10 font-bold">
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded ${isLightMode ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-red-500/15 text-red-400 border border-red-500/10'} font-bold`}>
                                   {isAr ? '⚠️ نمط ChatGPT (نسخ وسؤال)' : '⚠️ Active ChatGPT Loop'}
                                 </span>
                               )}
@@ -767,11 +725,11 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
 
                           {/* Progress bar representing time spent compared to expected */}
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[10px] text-slate-450 font-mono">
+                            <div className={`flex justify-between text-[10px] font-mono ${isLightMode ? 'text-slate-500' : 'text-slate-450'}`}>
                               <span>{isAr ? `الوقت المستهلك: ${q.timeSpentSeconds} ثانية` : `Time Spent: ${q.timeSpentSeconds}s`}</span>
                               <span>{isAr ? `الزمن المتوقع: ${standardSecsPerQ} ثانية` : `Base Expected: ${standardSecsPerQ}s`}</span>
                             </div>
-                            <div className="w-full bg-slate-950 h-1.5 rounded overflow-hidden rounded-full">
+                            <div className={`w-full ${isLightMode ? 'bg-slate-200' : 'bg-slate-950'} h-1.5 rounded overflow-hidden rounded-full`}>
                               <div 
                                 className={`h-full rounded-full transition-all ${isExtremelyRapid ? 'bg-amber-400' : ratio < 0.25 ? 'bg-red-500' : 'bg-emerald-500'}`}
                                 style={{ width: `${Math.max(5, Math.min(100, ratio * 100))}%` }}
@@ -780,14 +738,14 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                           </div>
 
                           {/* Per question plagiarism copy-paste statistics */}
-                          <div className="flex justify-between items-center bg-slate-950/60 p-2 rounded text-[10px] text-slate-400">
+                          <div className={`flex justify-between items-center ${isLightMode ? 'bg-slate-50' : 'bg-slate-950/60'} p-2 rounded text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                             <div>
                               <span>{isAr ? 'سجل العمليات بالسؤال:' : 'Clipboard metrics:'}</span>
-                              <strong className="text-slate-200 font-mono ml-1">
+                              <strong className={`${isLightMode ? 'text-slate-700' : 'text-slate-200'} font-mono ml-1`}>
                                 {cCount} {isAr ? 'نسخ' : 'copies'} / {pCount} {isAr ? 'لصق' : 'pastes'}
                               </strong>
                             </div>
-                            <div className="font-mono text-[9px] text-slate-500">
+                            <div className={`font-mono text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>
                               {isAr ? `نقرات لوحة المفاتيح: ${q.changesCount} تعديل` : `Deltas: ${q.changesCount} updates`}
                             </div>
                           </div>
@@ -796,30 +754,30 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                     })}
                   </div>
                 ) : (
-                  <div className="text-[11px] text-slate-500 text-center font-mono py-10">
+                  <div className={`text-[11px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} text-center font-mono py-10`}>
                     {isAr ? 'بانتظار تغييرات الأسئلة النشطة لمزامنة الدقائق' : 'No micro answer changes observed yet (or full proctor active)'}
                   </div>
                 )}
               </div>
 
               {/* Mathematical Plagiarism Equation transparency card */}
-              <div className="bg-slate-900 border border-rose-500/10 p-3 rounded-lg text-[10.5px] text-slate-400 space-y-2 mt-2">
-                <span className="text-[10px] font-bold text-red-400 flex items-center gap-1">
-                  <Settings className="w-3 h-3 text-red-500" />
+              <div className={`${isLightMode ? 'bg-white border border-rose-200' : 'bg-slate-900 border border-rose-500/10'} p-3 rounded-lg text-[10.5px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} space-y-2 mt-2`}>
+                <span className={`text-[10px] font-bold ${isLightMode ? 'text-rose-700' : 'text-red-400'} flex items-center gap-1`}>
+                  <Settings className={`w-3 h-3 ${isLightMode ? 'text-rose-700' : 'text-red-500'}`} />
                   {isAr ? 'آلية احتساب نقاط خطورة النسخ واللصق الثنائية:' : 'Copy-Paste Cheating Risk Calculation Math:'}
                 </span>
                 <p className="leading-relaxed">
                   {isAr 
                     ? `معدل الأقصى لنقاط النسخ واللصق بتقرير الرصد: ${copyPasteConfig.maxRiskPoints}ن. يتم رصد نمط تلقين ChatGPT عند تجاوز عتبة ${copyPasteConfig.chatGPTPatternThreshold} نسخ ولصق بالسؤال الواحد. إذا بلغت نسبة الأسئلة المخترقة تكرارياً ${copyPasteConfig.abusedMultiplier * 100}% فأكثر، فنسند العقوبة الكلية مباشرة.`
-                    : `Maximum score offset by Plagiarism checklist: ${copyPasteConfig.maxRiskPoints} points. Suspicious ChatGPT behavior flags if copying + pasting matches $\ge$ ${copyPasteConfig.chatGPTPatternThreshold} per question. Overcoming ${copyPasteConfig.abusedMultiplier * 100}% abused questions applies immediate full penalty.`
+                    : `Maximum score offset by Plagiarism checklist: ${copyPasteConfig.maxRiskPoints} points. Suspicious ChatGPT behavior flags if copying + pasting matches >= ${copyPasteConfig.chatGPTPatternThreshold} per question. Overcoming ${copyPasteConfig.abusedMultiplier * 100}% abused questions applies immediate full penalty.`
                   }
                 </p>
                 
                 {/* Live student maths resolver summary */}
-                <div className="bg-slate-950 p-2.5 rounded border border-slate-850 flex justify-between items-center font-mono text-[10px]">
+                <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-950 border border-slate-850'} p-2.5 rounded flex justify-between items-center font-mono text-[10px]`}>
                   <div>
                     {isAr ? 'حساب حالة الطالب الحالية:' : 'Current student values resolver:'}
-                    <div className="text-slate-300 mt-1">
+                    <div className={`${isLightMode ? 'text-slate-700' : 'text-slate-300'} mt-1`}>
                       {(() => {
                         const totalQs = questionDetails.length || 5;
                         const abusedQs = questionDetails.filter(q => q.copyCount >= copyPasteConfig.chatGPTPatternThreshold && q.pasteCount >= copyPasteConfig.chatGPTPatternThreshold).length;
@@ -831,8 +789,8 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-[9px] text-slate-500 block">{isAr ? 'النقاط المسندة للغش:' : 'Assigned Risk Points'}</span>
-                    <strong className="text-red-400 text-xs">
+                    <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block`}>{isAr ? 'النقاط المسندة للغش:' : 'Assigned Risk Points'}</span>
+                    <strong className={`${isLightMode ? 'text-rose-700' : 'text-red-400'} text-xs`}>
                       {(() => {
                         const totalQs = questionDetails.length || 5;
                         const abusedQs = questionDetails.filter(q => q.copyCount >= copyPasteConfig.chatGPTPatternThreshold && q.pasteCount >= copyPasteConfig.chatGPTPatternThreshold).length;
@@ -853,22 +811,22 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
             </div>
 
             {/* New Full Width Time-to-Solve Widget per Question */}
-            <div className="col-span-1 md:col-span-2 bg-slate-950/40 p-5 rounded-xl border border-slate-800 space-y-4">
-              <div className="flex justify-between items-center border-b border-slate-850 pb-3">
+            <div className={`col-span-1 md:col-span-2 ${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-950/40 border border-slate-800'} p-5 rounded-xl space-y-4`}>
+              <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pb-3`}>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <div className={`w-8 h-8 rounded-lg ${isLightMode ? 'bg-indigo-50 border border-indigo-200' : 'bg-indigo-500/10 border border-indigo-500/20'} flex items-center justify-center text-indigo-400`}>
                     <Timer className="w-4 h-4 text-indigo-400" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-black uppercase text-white font-sans">
+                    <h4 className={`text-xs font-black uppercase ${isLightMode ? 'text-slate-800' : 'text-white'} font-sans`}>
                       {isAr ? 'مخطط معايير الأسئلة (Question Metrics)' : 'Question Metrics - Solve Times vs Expectations'}
                     </h4>
-                    <span className="text-[10px] text-slate-500 block font-sans">
+                    <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block font-sans`}>
                       {isAr ? 'مقارنة دقيقة بين الوقت المستهلك التلقائي للأجوبة وتوقعات المدرس لكشف الانحرافات (باللون الأحمر)' : 'Comparing Actual Time Spent vs Teacher\'s Estimated Solving Time (Anomalies highlighted in red).'}
                     </span>
                   </div>
                 </div>
-                <span className="text-[10px] font-mono bg-indigo-500/10 text-indigo-400 px-2.5 py-1 rounded font-bold uppercase">
+                <span className={`text-[10px] font-mono ${isLightMode ? 'bg-indigo-50 text-indigo-700' : 'bg-indigo-500/10 text-indigo-400'} px-2.5 py-1 rounded font-bold uppercase`}>
                   {isAr ? 'تقرير تتبع زمن الأسئلة' : 'Question Metrics Engine'}
                 </span>
               </div>
@@ -897,7 +855,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                         <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                         <XAxis dataKey="name" stroke="#64748b" style={{ fontSize: '10px' }} />
                         <YAxis stroke="#64748b" style={{ fontSize: '10px' }} />
-                        <Tooltip content={<CustomTimeTooltip />} />
+                        <Tooltip content={<CustomTimeTooltip isAr={isAr} isLightMode={isLightMode} />} />
                         <Bar dataKey={isAr ? 'الزمن الفعلي (ث)' : 'Actual Time (s)'} radius={[4, 4, 0, 0]}>
                           {questionDetails.map((q, idx) => {
                             const baseMin = latestSub.examDifficulty === "easy" 
@@ -920,10 +878,10 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                       </BarChart>
                     </ResponsiveContainer>
                     {/* Legend / Tooltip color coding keys */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-2 justify-start items-center text-[10px] font-mono border-t border-slate-850/60 pt-3 mt-2">
+                    <div className={`flex flex-wrap gap-x-4 gap-y-2 justify-start items-center text-[10px] font-mono border-t ${isLightMode ? 'border-slate-200' : 'border-slate-850/60'} pt-3 mt-2`}>
                       <div className="flex items-center gap-1.5">
                         <div className="w-2.5 h-2.5 rounded bg-[#4f46e5]" />
-                        <span className="text-slate-400">
+                        <span className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                           {isAr ? 'الوقت الفعلي (طبيعي)' : 'Actual Time (Normal)'}
                         </span>
                       </div>
@@ -935,7 +893,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div className="w-2.5 h-2.5 rounded bg-[#f59e0b]" />
-                        <span className="text-slate-400">
+                        <span className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                           {isAr ? 'تقدير وقت الاستحقاق للمدرس' : 'Expected Estimate'}
                         </span>
                       </div>
@@ -943,7 +901,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                   </div>
 
                   <div className="lg:col-span-6 space-y-2.5">
-                    <h5 className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold">
+                    <h5 className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold`}>
                       {isAr ? 'تحليل الفروقات والسرعة الزمنية لكل سؤال:' : 'Duration Deviations & Flagged Anomaly Feed:'}
                     </h5>
                     <div className="space-y-2 max-h-[190px] overflow-y-auto pr-1">
@@ -955,24 +913,31 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                           : timingConfig.hardBaseMinutesPerQuestion;
                         const expectedSecs = Math.round(baseMin * timingConfig.teacherTimeAdjustment * 60);
                         const ratio = q.timeSpentSeconds / (expectedSecs || 60);
-                        
-                        let statusText = "";
-                        let statusColor = "";
-                        let varianceText = "";
 
-                        if (q.timeSpentSeconds < 15 || ratio < 0.2) {
-                          statusText = isAr ? "🚨 انحراف زمني: حل فائق السرعة" : "🚨 Rapid Solve Anomaly";
-                          statusColor = "bg-red-500/10 text-red-400 border-red-500/20";
-                          varianceText = isAr ? "أسرع بـ 80% أو أكثر من المتوقع" : "Solved 80%+ faster than teacher expectation";
-                        } else if (ratio > 1.8) {
-                          statusText = isAr ? "⚠️ تأخر سلوكي: مكوث طويل" : "⚠️ Stuck/Slowing Lag";
-                          statusColor = "bg-amber-500/10 text-amber-300 border-amber-500/20";
-                          varianceText = isAr ? "تجاوز 180% من الزمن المتوقع" : "Exceeded 1.8x estimated solved duration";
-                        } else {
-                          statusText = isAr ? "✓ سلوك طبيعي ومتناسق" : "✓ Optimal Dwell Range";
-                          statusColor = "bg-emerald-500/10 text-emerald-450 border-emerald-500/20";
-                          varianceText = isAr ? "وقع الحل ضمن حدود الوقت المعقولة" : "Solved healthy within time buffer limits";
-                        }
+                        const statusData = (() => {
+                          if (q.timeSpentSeconds < 15 || ratio < 0.2) {
+                            return {
+                              text: isAr ? "🚨 انحراف زمني: حل فائق السرعة" : "🚨 Rapid Solve Anomaly",
+                              color: isLightMode ? "bg-red-50 text-red-700 border-red-200" : "bg-red-500/10 text-red-400 border-red-500/20",
+                              variance: isAr ? "أسرع بـ 80% أو أكثر من المتوقع" : "Solved 80%+ faster than teacher expectation",
+                            };
+                          }
+                          if (ratio > 1.8) {
+                            return {
+                              text: isAr ? "⚠️ تأخر سلوكي: مكوث طويل" : "⚠️ Stuck/Slowing Lag",
+                              color: isLightMode ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-amber-500/10 text-amber-300 border-amber-500/20",
+                              variance: isAr ? "تجاوز 180% من الزمن المتوقع" : "Exceeded 1.8x estimated solved duration",
+                            };
+                          }
+                          return {
+                            text: isAr ? "✓ سلوك طبيعي ومتناسق" : "✓ Optimal Dwell Range",
+                            color: isLightMode ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-emerald-500/10 text-emerald-450 border-emerald-500/20",
+                            variance: isAr ? "وقع الحل ضمن حدود الوقت المعقولة" : "Solved healthy within time buffer limits",
+                          };
+                        })();
+                        const statusText = statusData.text;
+                        const statusColor = statusData.color;
+                        const varianceText = statusData.variance;
 
                         const speedRatio = Math.round(Math.abs(1 - ratio) * 100);
                         const relativeStr = ratio < 1 
@@ -980,7 +945,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                           : (isAr ? `${speedRatio}% أبطأ` : `${speedRatio}% slower`);
 
                         return (
-                          <div key={idx} className="bg-slate-900 border border-slate-850 p-2.5 rounded-lg flex items-center justify-between text-[11px] gap-2">
+                          <div key={idx} className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-850'} p-2.5 rounded-lg flex items-center justify-between text-[11px] gap-2`}>
                             <div>
                               <div className="flex items-center gap-1.5">
                                 <span className="font-bold text-slate-250 font-mono text-xs">Q#{q.questionNumber}</span>
@@ -988,13 +953,13 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                                   {statusText}
                                 </span>
                               </div>
-                              <span className="text-[10px] text-slate-500 block mt-0.5">{varianceText}</span>
+                              <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block mt-0.5`}>{varianceText}</span>
                             </div>
                             <div className="text-right font-mono text-[10px]">
-                              <div className="text-slate-300">
-                                <strong>{q.timeSpentSeconds}s</strong> <span className="text-slate-500">vs</span> <strong>{expectedSecs}s</strong>
+                              <div className={`${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+                                <strong>{q.timeSpentSeconds}s</strong> <span className={`${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>vs</span> <strong>{expectedSecs}s</strong>
                               </div>
-                              <span className={`text-[9px] font-bold ${ratio < 0.2 ? 'text-red-400' : ratio > 1.8 ? 'text-amber-400' : 'text-emerald-500'}`}>
+                              <span className={`text-[9px] font-bold ${ratio < 0.2 ? `${isLightMode ? 'text-red-700' : 'text-red-400'}` : ratio > 1.8 ? `${isLightMode ? 'text-amber-700' : 'text-amber-400'}` : 'text-emerald-500'}`}>
                                 ({relativeStr})
                               </span>
                             </div>
@@ -1005,33 +970,33 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="text-xs text-slate-550 text-center font-mono py-8">
+                <div className={`text-xs ${isLightMode ? 'text-slate-400' : 'text-slate-550'} text-center font-mono py-8`}>
                   {isAr ? 'لا تتوفر فعاليات حل نشطة بالأرشيف' : 'No question solve events available yet.'}
                 </div>
               )}
             </div>
 
             {/* New Full Width Clipboard Activity & ChatGPT Loops Hub */}
-            <div className="col-span-1 md:col-span-2 bg-slate-950/40 p-5 rounded-xl border border-slate-800 space-y-4">
-              <div className="flex justify-between items-center border-b border-slate-850 pb-3">
+            <div className={`col-span-1 md:col-span-2 ${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-950/40 border border-slate-800'} p-5 rounded-xl space-y-4`}>
+              <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pb-3`}>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                  <div className={`w-8 h-8 rounded-lg ${isLightMode ? 'bg-blue-50 border border-blue-200' : 'bg-blue-500/10 border border-blue-500/20'} flex items-center justify-center text-blue-400`}>
                     <Activity className="w-4 h-4 text-blue-400" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-black uppercase text-white">
+                    <h4 className={`text-xs font-black uppercase ${isLightMode ? 'text-slate-800' : 'text-white'}`}>
                       {isAr ? 'لوحة تتبع فعاليات الحافظة المفصلة (Clipboard Feed Dashboard)' : 'Plagiarism Trace Hub & Granular Clipboard Events'}
                     </h4>
-                    <span className="text-[10px] text-slate-550 block">
+                    <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-550'} block`}>
                       {isAr ? 'عرض تفصيلي لعمليات النسخ واللصق لكل سؤال ومقارنتها بالإجمالي العام لكشف تلقين ChatGPT' : 'Listing every copy/paste event globally and per question with raw timeline traces.'}
                     </span>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <span className="text-[10px] font-mono bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded font-bold">
+                  <span className={`text-[10px] font-mono ${isLightMode ? 'bg-blue-50 text-blue-700' : 'bg-blue-500/10 text-blue-400'} px-2 py-0.5 rounded font-bold`}>
                     {latestSub.copyCount} {isAr ? 'نسخ إجمالي' : 'Global Copies'}
                   </span>
-                  <span className="text-[10px] font-mono bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-bold">
+                  <span className={`text-[10px] font-mono ${isLightMode ? 'bg-indigo-50 text-indigo-700' : 'bg-indigo-500/10 text-indigo-400'} px-2 py-0.5 rounded font-bold`}>
                     {latestSub.pasteCount} {isAr ? 'لصق إجمالي' : 'Global Pastes'}
                   </span>
                 </div>
@@ -1041,7 +1006,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Left Column: Per-Question Clipboard Distribution list */}
                   <div className="space-y-2.5">
-                    <h5 className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold">
+                    <h5 className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold`}>
                       {isAr ? 'مؤشرات نسخ ولصق الحافظة على مستوى الأسئلة:' : 'Clipboard Performance Per Question:'}
                     </h5>
                     <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
@@ -1057,34 +1022,34 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                         const isAbused = qCopy >= copyPasteConfig.chatGPTPatternThreshold && qPaste >= copyPasteConfig.chatGPTPatternThreshold;
 
                         return (
-                          <div key={idx} className="bg-slate-900 border border-slate-850 p-3 rounded-xl space-y-2">
+                          <div key={idx} className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-850'} p-3 rounded-xl space-y-2`}>
                             <div className="flex justify-between items-center text-xs">
                               <span className="font-extrabold text-blue-300">Q#{q.questionNumber}</span>
                               {isAbused ? (
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/15 text-red-00 border border-red-500/20 font-bold uppercase text-red-400">
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase ${isLightMode ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-red-500/15 text-red-00 border border-red-500/20 text-red-400'}`}>
                                   {isAr ? '⚠️ غش مؤكد: حلقة تلقين' : '⚠️ ChatGPT Feed Threat'}
                                 </span>
                               ) : (qCopy > 0 || qPaste > 0) ? (
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/10 font-bold">
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${isLightMode ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-amber-500/10 text-amber-300 border border-amber-500/10'}`}>
                                   {isAr ? 'نشاط حافظة مرتفع' : 'Clip Activity Detected'}
                                 </span>
                               ) : (
-                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-850 text-slate-500 font-medium font-mono text-[8px]">
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium font-mono text-[8px] ${isLightMode ? 'bg-slate-200 border border-slate-200 text-slate-500' : 'bg-slate-800 border border-slate-850 text-slate-500'}`}>
                                   {isAr ? 'خالٍ من الانتهاكات' : 'Compliant Status'}
                                 </span>
                               )}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3 text-[11px] bg-slate-950/40 p-2 rounded border border-slate-850/50">
+                            <div className={`grid grid-cols-2 gap-3 text-[11px] ${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-950/40 border border-slate-850/50'} p-2 rounded`}>
                               <div>
-                                <span className="text-slate-500 block text-[9px] font-bold uppercase">{isAr ? 'نسخ هذا السؤال' : 'Copies of this Q'}</span>
-                                <strong className="text-white text-xs">{qCopy}</strong>
-                                <span className="text-slate-600 block text-[8px]">{copyContribution}% {isAr ? 'من الإجمالي' : 'of session'}</span>
+                                <span className={`${isLightMode ? 'text-slate-400' : 'text-slate-500'} block text-[9px] font-bold uppercase`}>{isAr ? 'نسخ هذا السؤال' : 'Copies of this Q'}</span>
+                                <strong className={`${isLightMode ? 'text-slate-800' : 'text-white'} text-xs`}>{qCopy}</strong>
+                                <span className={`${isLightMode ? 'text-slate-500' : 'text-slate-600'} block text-[8px]`}>{copyContribution}% {isAr ? 'من الإجمالي' : 'of session'}</span>
                               </div>
                               <div>
-                                <span className="text-slate-500 block text-[9px] font-bold uppercase">{isAr ? 'لصق في هذا السؤال' : 'Pastes in this Q'}</span>
+                                <span className={`${isLightMode ? 'text-slate-400' : 'text-slate-500'} block text-[9px] font-bold uppercase`}>{isAr ? 'لصق في هذا السؤال' : 'Pastes in this Q'}</span>
                                 <strong className="text-indigo-400 text-xs">{qPaste}</strong>
-                                <span className="text-slate-600 block text-[8px]">{pasteContribution}% {isAr ? 'من الإجمالي' : 'of session'}</span>
+                                <span className={`${isLightMode ? 'text-slate-500' : 'text-slate-600'} block text-[8px]`}>{pasteContribution}% {isAr ? 'من الإجمالي' : 'of session'}</span>
                               </div>
                             </div>
                           </div>
@@ -1095,12 +1060,11 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
 
                   {/* Right Column: Simulated Granular Event logs for clipboard actions */}
                   <div className="space-y-2.5">
-                    <h5 className="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-bold">
+                    <h5 className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold`}>
                       {isAr ? 'قائمة الفعاليات المفصلة للنسخ واللصق بالسؤال (Clipboard Activity):' : 'Clipboard Activity Logs indexed by Question ID:'}
                     </h5>
-                    <div className="bg-slate-900 border border-slate-850 rounded-xl p-4 space-y-4 max-h-[300px] overflow-y-auto">
+                    <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-900 border border-slate-850'} rounded-xl p-4 space-y-4 max-h-[300px] overflow-y-auto`}>
                       {(() => {
-                        let baseTimeMs = new Date(latestSub.startTime || Date.now()).getTime();
                         let hasAnyClipActivity = false;
 
                         return (
@@ -1139,27 +1103,27 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                               events.sort((a, b) => a.time.localeCompare(b.time));
 
                               return (
-                                <div key={qIdx} className="bg-slate-950 p-3 rounded-xl border border-slate-850 space-y-2">
+                                <div key={qIdx} className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-950 border border-slate-850'} p-3 rounded-xl space-y-2`}>
                                   {/* Header indexing by Question ID */}
-                                  <div className="flex justify-between items-center border-b border-slate-850 pb-2">
+                                  <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pb-2`}>
                                     <span className="text-xs font-black text-blue-400 font-mono">
                                       {isAr ? `معرّف السؤال: Q#${q.questionNumber}` : `Question ID: Q#${q.questionNumber}`}
                                     </span>
-                                    <span className="text-[10px] text-slate-500 font-mono font-bold uppercase">
+                                    <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-mono font-bold uppercase`}>
                                       {copies} {isAr ? 'نسخ' : 'copies'} / {pastes} {isAr ? 'لصق' : 'pastes'}
                                     </span>
                                   </div>
 
                                   <div className="space-y-2 font-mono text-[10px]">
                                     {events.map((ev, evIdx) => (
-                                      <div key={evIdx} className="flex items-center justify-between bg-slate-900/50 p-2 rounded border border-slate-850">
+                                      <div key={evIdx} className={`flex items-center justify-between ${isLightMode ? 'bg-slate-50 border border-slate-200' : 'bg-slate-900/50 border border-slate-850'} p-2 rounded`}>
                                         <div className="flex items-center gap-2">
-                                          <span className="text-[10px] font-bold text-slate-500">[{ev.time}]</span>
-                                          <span className={ev.type === 'copy' ? 'text-amber-400 font-bold' : 'text-blue-400 font-bold'}>
+                                          <span className={`text-[10px] font-bold ${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>[{ev.time}]</span>
+                                          <span className={ev.type === 'copy' ? `${isLightMode ? 'text-amber-700' : 'text-amber-400'} font-bold` : `${isLightMode ? 'text-blue-700' : 'text-blue-400'} font-bold`}>
                                             {ev.type === 'copy' ? (isAr ? 'نسخ' : 'COPY') : (isAr ? 'لصق' : 'PASTE')}
                                           </span>
                                         </div>
-                                        <span className="text-slate-400 text-[9.5px] max-w-[180px] truncate" title={ev.text}>
+                                        <span className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} text-[9.5px] max-w-[180px] truncate`} title={ev.text}>
                                           {ev.text}
                                         </span>
                                       </div>
@@ -1170,7 +1134,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                             })}
 
                             {!hasAnyClipActivity && (
-                              <div className="text-slate-500 py-12 text-center text-xs italic font-mono">
+                              <div className={`${isLightMode ? 'text-slate-400' : 'text-slate-500'} py-12 text-center text-xs italic font-mono`}>
                                 {isAr ? 'لا يوجد أي نشاط نسخ أو لصق للحافظة مسجل لهذا الطالب.' : 'Clipboard Activity is absolutely clean for this student.'}
                               </div>
                             )}
@@ -1181,7 +1145,7 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
                   </div>
                 </div>
               ) : (
-                <div className="text-xs text-slate-550 text-center font-mono py-8">
+                <div className={`text-xs ${isLightMode ? 'text-slate-400' : 'text-slate-550'} text-center font-mono py-8`}>
                   {isAr ? 'لا تتوفر فعاليات بالذاكرة المؤقتة' : 'No clipboard logs generated for this student session.'}
                 </div>
               )}
@@ -1192,3 +1156,47 @@ export const StudentOverviewDashboard: React.FC<StudentOverviewProps> = ({
     </div>
   );
 };
+
+// Extracted tooltip component to avoid inline component creation during render
+function CustomTimeTooltip({ active, payload, label, isAr, isLightMode }: { active?: boolean; payload?: any[]; label?: string; isAr: boolean; isLightMode: boolean }) {
+  if (active && payload && payload.length) {
+    const actual = payload[0]?.value;
+    const expected = payload[1]?.value;
+    const ratio = actual / (expected || 60);
+    const isAnomaly = actual < 15 || ratio < 0.2 || ratio > 1.8;
+    
+    let statusText = isAr ? 'طبيعي' : 'Normal';
+    let statusColor = 'text-indigo-400';
+    if (isAnomaly) {
+      statusColor = 'text-rose-400 font-bold';
+      if (actual < 15) {
+        statusText = isAr ? 'انحراف: حل سريع للغاية (< ١٥ ثانية)' : 'Deviation: Extremely Rapid (< 15s)';
+      } else if (ratio < 0.2) {
+        statusText = isAr ? 'انحراف: سرعة مفرطة مقارنة بالتقدير' : 'Deviation: Excessively Fast vs Estimate';
+      } else {
+        statusText = isAr ? 'انحراف: تأخير مفرط / توقف' : 'Deviation: Excessively Slow / Idle';
+      }
+    }
+
+    return (
+      <div className={`${isLightMode ? 'bg-white border border-slate-200' : 'bg-slate-950 border border-slate-800'} p-3 rounded-xl shadow-xl text-[11px] font-mono`}>
+        <p className={`${isLightMode ? 'text-slate-800' : 'text-white'} font-black mb-1.5 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pb-1`}>{label}</p>
+        <div className="space-y-1">
+          <p className={`${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+            {isAr ? 'الزمن الفعلي:' : 'Actual Time:'}{' '}
+            <span className="text-indigo-300 font-bold">{actual}s</span>
+          </p>
+          <p className={`${isLightMode ? 'text-slate-700' : 'text-slate-300'}`}>
+            {isAr ? 'الزمن المقدر للمعلم:' : 'Teacher Target:'}{' '}
+            <span className="text-amber-400 font-bold">{expected}s</span>
+          </p>
+          <div className={`border-t ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pt-1.5 mt-1.5 flex items-center gap-1`}>
+            <span className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>{isAr ? 'الحالة:' : 'Verdict:'}</span>
+            <span className={statusColor}>{statusText}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+}

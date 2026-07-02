@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, ChevronLeft, ChevronRight, HelpCircle } from 'lucide-react';
 
 interface TourStep {
@@ -73,20 +73,17 @@ export default function SiteTour({ lang, isLightMode }: { lang: 'ar' | 'en'; isL
   const [currentStep, setCurrentStep] = useState(0);
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      setVisible(true);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-      const timer = setTimeout(() => setVisible(false), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
-
   const startTour = () => {
     setIsOpen(true);
+    setVisible(true);
     setCurrentStep(0);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeTour = () => {
+    setIsOpen(false);
+    document.body.style.overflow = '';
+    setTimeout(() => setVisible(false), 300);
   };
 
   const nextStep = () => {
@@ -99,10 +96,6 @@ export default function SiteTour({ lang, isLightMode }: { lang: 'ar' | 'en'; isL
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
-  };
-
-  const closeTour = () => {
-    setIsOpen(false);
   };
 
   if (!visible && !isOpen) return null;

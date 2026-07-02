@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { motion } from "motion/react";
 import {
   Shield,
@@ -53,6 +53,7 @@ interface AIPlagiarismConfig {
 
 interface EngineControlPanelProps {
   lang: 'ar' | 'en';
+  isLightMode: boolean;
   exams: any[];
   showToast: (title: string, desc: string, type?: 'success' | 'warn' | 'error') => void;
   handleReload: () => void;
@@ -60,7 +61,7 @@ interface EngineControlPanelProps {
   setUserRole?: (role: 'admin' | 'proctor') => void;
 }
 
-export default function EngineControlPanel({ lang, exams, showToast, handleReload, userRole, setUserRole }: EngineControlPanelProps) {
+export default function EngineControlPanel({ lang, isLightMode, exams, showToast, handleReload, userRole, setUserRole }: EngineControlPanelProps) {
   const isAdmin = userRole ? userRole === 'admin' : true;
   
   const [activeSubTab, setActiveSubTab] = useState<'rules' | 'aiPlatform' | 'timing_and_plagiarism' | 'anomaly_weights'>('rules');
@@ -124,7 +125,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
   const [savingConfig, setSavingConfig] = useState(false);
 
   // Analysis trial sandbox state
-  const [selectedSandboxExamId, setSelectedSandboxExamId] = useState<string>("");
+  const [selectedSandboxExamId, setSelectedSandboxExamId] = useState<string>(exams?.[0]?.id || "");
   const [runningAnalysis, setRunningAnalysis] = useState(false);
   const [analysisOutput, setAnalysisOutput] = useState<{
     packingLog: string[];
@@ -182,10 +183,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
   };
 
   useEffect(() => {
-    fetchData();
-    if (exams && exams.length > 0) {
-      setSelectedSandboxExamId(exams[0].id);
-    }
+    setTimeout(() => fetchData(), 0);
   }, [exams]);
 
   // Handle saving rules of cheating thresholds
@@ -413,7 +411,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
     );
   };
 
-  const handleSaveRuleForm = (e: React.FormEvent) => {
+  const handleSaveRuleForm = (e: FormEvent) => {
     e.preventDefault();
     if (!formNameEn || !formFormula || !formMetricKey) {
       showToast(
@@ -507,14 +505,14 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
   const totalPossibleScore = rules.reduce((acc, curr) => curr.enabled ? acc + curr.baseWeight : acc, 0);
 
   return (
-    <div className={`space-y-6 text-slate-100 ${lang === 'ar' ? 'font-sans' : 'font-sans'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+    <div className={`space-y-6 ${isLightMode ? 'text-slate-800' : 'text-slate-100'} ${lang === 'ar' ? 'font-sans' : 'font-sans'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
       {/* Request Access Modal */}
       {showAccessModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+          <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative`}>
             <button 
               onClick={() => setShowAccessModal(false)}
-              className="absolute top-4 right-4 text-slate-500 hover:text-white transition cursor-pointer"
+              className={`absolute top-4 right-4 ${isLightMode ? 'text-slate-400 hover:text-slate-800' : 'text-slate-500 hover:text-white'} transition cursor-pointer`}
             >
               <XCircle className="w-5 h-5" />
             </button>
@@ -522,27 +520,27 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mx-auto">
                 <Lock className="w-6 h-6" />
               </div>
-              <h3 className="text-md font-bold text-white">
+              <h3 className={`text-md font-bold ${isLightMode ? 'text-slate-800' : 'text-white'}`}>
                 {lang === 'ar' ? 'نموذج طلب ترقية الصلاحيات للمراقب' : 'Proctor Privilege Elevation Request'}
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'} leading-relaxed`}>
                 {lang === 'ar' 
                   ? 'بصفتك مراقباً، تليمتري الرصد يعمل بوضع المشاهدة فقط لمنع العبث بالتكوينات الرياضية أثناء الامتحانات الجارية. يمكنك محاكاة إرسال طلب للمدير والحصول على موافقة فورية للترقية.' 
                   : 'As a proctor, telemetry calibrations are locked to maintain assessment integrity. Send an emergency bypass request key to elevate credentials right now.'}
               </p>
             </div>
 
-            <div className="bg-slate-950 p-3 rounded-lg border border-slate-850 space-y-2 text-[11px] font-mono">
+            <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850'} p-3 rounded-lg border space-y-2 text-[11px] font-mono`}>
               <div className="flex justify-between">
-                <span className="text-slate-500">{lang === 'ar' ? 'المستخدم الحالي:' : 'Requested User:'}</span>
-                <span className="text-slate-300">Proctor_Account_337</span>
+                <span className={`${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>{lang === 'ar' ? 'المستخدم الحالي:' : 'Requested User:'}</span>
+                <span className={`${isLightMode ? 'text-slate-600' : 'text-slate-300'}`}>Proctor_Account_337</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">{lang === 'ar' ? 'الصلاحية المرغوبة:' : 'Target Clearance:'}</span>
+                <span className={`${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>{lang === 'ar' ? 'الصلاحية المرغوبة:' : 'Target Clearance:'}</span>
                 <span className="text-indigo-400 font-bold">System Administrator</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">{lang === 'ar' ? 'مستوى الحماية:' : 'Security Guard Mode:'}</span>
+                <span className={`${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>{lang === 'ar' ? 'مستوى الحماية:' : 'Security Guard Mode:'}</span>
                 <span className="text-emerald-400">RESTRICTED_BYPASS_A_99</span>
               </div>
             </div>
@@ -550,7 +548,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setShowAccessModal(false)}
-                className="flex-1 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-bold py-2.5 rounded-lg transition"
+                className={`flex-1 ${isLightMode ? 'bg-slate-200 hover:bg-slate-300 text-slate-600' : 'bg-slate-800 hover:bg-slate-750 text-slate-300'} text-xs font-bold py-2.5 rounded-lg transition`}
               >
                 {lang === 'ar' ? 'إلغاء الأمر' : 'Cancel'}
               </button>
@@ -568,7 +566,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                     );
                   }
                 }}
-                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2.5 rounded-lg transition flex items-center justify-center gap-2"
+                className={`flex-1 bg-blue-600 hover:bg-blue-500 ${isLightMode ? 'text-white' : 'text-white'} text-xs font-bold py-2.5 rounded-lg transition flex items-center justify-center gap-2`}
                 disabled={escalating}
               >
                 {escalating ? (
@@ -591,7 +589,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               <h4 className="text-xs font-bold text-rose-400 uppercase">
                 {lang === 'ar' ? 'وضع المشاهدة فقط للمراقبين (Proctor Read-Only)' : 'Proctor Read-Only Override Enabled'}
               </h4>
-              <p className="text-[10px] text-slate-300 mt-0.5">
+              <p className={`text-[10px] ${isLightMode ? 'text-slate-600' : 'text-slate-300'} mt-0.5`}>
                 {lang === 'ar' 
                   ? 'أنت تستعرض لوحة تحكم محرك رصد الصلاحيات برتبة مراقب. لا تملك صلاحيات لتعديل هذه الإعدادات مباشرة.'
                   : 'You have read-only access to custom dynamic weights and AI pipeline templates. Modify privileges disabled.'}
@@ -600,7 +598,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
           </div>
           <button 
             onClick={() => setShowAccessModal(true)}
-            className="shrink-0 bg-rose-600 hover:bg-rose-500 text-white font-bold text-[10.5px] px-3.5 py-1.5 rounded-lg transition duration-150 cursor-pointer shadow-md"
+            className={`shrink-0 bg-rose-600 hover:bg-rose-500 ${isLightMode ? 'text-white' : 'text-white'} font-bold text-[10.5px] px-3.5 py-1.5 rounded-lg transition duration-150 cursor-pointer shadow-md`}
           >
             {lang === 'ar' ? '🔐 طلب وصول وتوسيع الصلاحيات' : '🔐 Request Access / Escalate'}
           </button>
@@ -614,7 +612,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
           <h4 className="text-xs font-bold text-amber-400">
             {lang === 'ar' ? 'مذكرة السياسة الأكاديمية: قاعات الحل المنزلية' : 'Academic Policy Note: Remote Home Examinations'}
           </h4>
-          <p className="text-[11px] text-slate-350 leading-relaxed">
+          <p className={`text-[11px] ${isLightMode ? 'text-slate-600' : 'text-slate-350'} leading-relaxed`}>
             {lang === 'ar' 
               ? 'نظراً لإجراء الاختبارات بالكامل عن بُعد من منازل الطلاب حيث تغيب الرقابة العينية المباشرة، يعتمد هذا النظام كلياً على تكامل المحددات وقيم الخطر التراكمية. يمكنك استخدام لوحة القواعد لتكييف أشرطة كشف الانحرافات والنسخ واللصق، بالإضافة للتحقق الدلالي بواسطة نماذج الذكاء الاصطناعي لحظر محاولات الغش بكفاءة.'
               : 'As examinations are taken remotely from student residences without proctor physical oversight, the platforms relies entirely on telemetry criteria. Use this dashboard to fine-tune active rule sensitivities, sliding points, and link external LLMs to filter concurrent similarity clusters.'
@@ -624,15 +622,15 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
       </div>
 
       {/* Main Title Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+      <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} pb-5`}>
         <div>
-          <h2 className="text-xl font-black text-white flex items-center gap-2">
+          <h2 className={`text-xl font-black ${isLightMode ? 'text-slate-800' : 'text-white'} flex items-center gap-2`}>
             <Cpu className="text-blue-500 w-6 h-6" />
             <span>
               {lang === 'ar' ? 'لوحة التحكم بمحرك الرصد وتعديل المعادلات' : 'Proctor Engine Rules & AI Alignment'}
             </span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1.5">
+          <p className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'} mt-1.5`}>
             {lang === 'ar' 
               ? 'حدد سلوك وعتبات استنباط درجة الغش، واربط قنوات الفحص بنماذج الذكاء الاصطناعي لتتبع تشابه الحلول.'
               : 'Audit telemetry weight coefficients, configure active triggers and feed exams to custom AI integration agents.'
@@ -641,10 +639,10 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
         </div>
 
         {/* Outer Tabs selector */}
-        <div className="flex bg-slate-950 p-1 rounded-lg border border-slate-800 self-start md:self-auto shrink-0 flex-wrap gap-1">
+        <div className={`flex ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} p-1 rounded-lg border self-start md:self-auto shrink-0 flex-wrap gap-1`}>
           <button
             onClick={() => setActiveSubTab('rules')}
-            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'rules' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'rules' ? 'bg-blue-600 text-white shadow' : isLightMode ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white'}`}
           >
             <Sliders className="w-4 h-4" />
             <span>{lang === 'ar' ? 'معادلات الرصد السلوكي' : 'Telemetry Rules & Weights'}</span>
@@ -652,7 +650,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
           
           <button
             onClick={() => setActiveSubTab('aiPlatform')}
-            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'aiPlatform' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'aiPlatform' ? 'bg-blue-600 text-white shadow' : isLightMode ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white'}`}
           >
             <Cpu className="w-4 h-4" />
             <span>{lang === 'ar' ? 'بوابة الذكاء الاصطناعي (AI Check)' : 'AI Copier Alignment'}</span>
@@ -660,7 +658,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
           <button
             onClick={() => setActiveSubTab('timing_and_plagiarism')}
-            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'timing_and_plagiarism' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'timing_and_plagiarism' ? 'bg-blue-600 text-white shadow' : isLightMode ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white'}`}
           >
             <Clock className="w-4 h-4" />
             <span>{lang === 'ar' ? 'نموذج الوقت ومعادلة النسخ' : 'Timing & Plagiarism Settings'}</span>
@@ -668,7 +666,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
           <button
             onClick={() => setActiveSubTab('anomaly_weights')}
-            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'anomaly_weights' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+            className={`px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2 transition duration-150 cursor-pointer ${activeSubTab === 'anomaly_weights' ? 'bg-blue-600 text-white shadow' : isLightMode ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white'}`}
           >
             <Settings2 className="w-4 h-4 animate-spin-slow" />
             <span>{lang === 'ar' ? 'أوزان مؤشرات المخاطر المخصصة' : 'Mathematical Anomaly Weights'}</span>
@@ -680,12 +678,12 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Rules tuning fields */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 shadow-lg">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+            <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-4 shadow-lg`}>
+              <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} pb-3`}>
                 <h3 className="text-xs font-black uppercase text-blue-400 tracking-wider">
                   {lang === 'ar' ? 'مؤشرات الغش والتأثير النسبي' : 'Active Cheating Telemetry Triggers & Scales'}
                 </h3>
-                <span className="text-[10px] font-mono text-slate-400">
+                <span className={`text-[10px] font-mono ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>
                   {lang === 'ar' ? 'تعديل المعاملات وقت العمل' : 'Dynamic Runtime Interlocking'}
                 </span>
               </div>
@@ -693,35 +691,35 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               {loadingRules ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-2">
                   <RefreshCw className="w-6 h-6 text-blue-500 animate-spin" />
-                  <p className="text-xs text-slate-400">{lang === 'ar' ? 'جاري جلب القواعد من الذاكرة السيادية...' : 'Fetching active rules schemas...'}</p>
+                  <p className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>{lang === 'ar' ? 'جاري جلب القواعد من الذاكرة السيادية...' : 'Fetching active rules schemas...'}</p>
                 </div>
               ) : (
-                <div className="divide-y divide-slate-800/60">
+                <div className={`divide-y ${isLightMode ? 'divide-slate-200' : 'divide-slate-800/60'}`}>
                   {rules.map((rule) => (
                     <div key={rule.id} className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="space-y-1 max-w-lg">
                         <div className="flex items-center gap-2">
                           <span className={`w-2 h-2 rounded-full ${rule.enabled ? 'bg-emerald-500' : 'bg-slate-600'}`}></span>
-                          <span className="text-xs font-bold text-slate-200">
+                          <span className={`text-xs font-bold ${isLightMode ? 'text-slate-700' : 'text-slate-200'}`}>
                             {lang === 'ar' ? rule.nameAr : rule.nameEn}
                           </span>
-                          <span className="text-[10px] font-mono bg-slate-950 px-2 py-0.5 text-slate-400 rounded border border-slate-805">
+                          <span className={`text-[10px] font-mono ${isLightMode ? 'bg-slate-50 text-slate-500 border-slate-300' : 'bg-slate-950 text-slate-400 border-slate-805'} px-2 py-0.5 rounded border`}>
                             {rule.metricKey}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-400 leading-relaxed">
+                        <p className={`text-[11px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} leading-relaxed`}>
                           {lang === 'ar' ? rule.descriptionAr : rule.descriptionEn}
                         </p>
                         <div className="text-[10px] text-blue-400 font-mono flex items-center gap-1 mt-1 font-sans">
                           <Code className="w-3" />
                           <span>{lang === 'ar' ? 'شرط المعادلة تفعيل:' : 'Trigger Statement:'}</span>
-                          <code className="text-slate-300 bg-slate-950 px-1.5 py-0.5 rounded font-mono text-[9.5px] border border-slate-800">{rule.conditionFormula}</code>
+                          <code className={`${isLightMode ? 'text-slate-600 bg-slate-50 border-slate-200' : 'text-slate-300 bg-slate-950 border-slate-800'} px-1.5 py-0.5 rounded font-mono text-[9.5px] border`}>{rule.conditionFormula}</code>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 shrink-0 self-stretch sm:self-auto justify-between border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-800">
+                      <div className={`flex items-center gap-3 shrink-0 self-stretch sm:self-auto justify-between border-t sm:border-t-0 pt-2 sm:pt-0 ${isLightMode ? 'border-slate-200' : 'border-slate-800'}`}>
                         {/* Edit & Delete Action Buttons */}
-                        <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-md border border-slate-800">
+                        <div className={`flex items-center gap-1 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} p-1 rounded-md border`}>
                           <button
                             type="button"
                             onClick={() => {
@@ -734,7 +732,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                               setFormDescAr(rule.descriptionAr);
                               setFormDescEn(rule.descriptionEn);
                             }}
-                            className="p-1 hover:text-white text-slate-400 rounded hover:bg-slate-900 transition cursor-pointer"
+                            className={`p-1 ${isLightMode ? 'hover:text-slate-800 text-slate-500 hover:bg-slate-100' : 'hover:text-white text-slate-400 hover:bg-slate-900'} rounded transition cursor-pointer`}
                             title={lang === 'ar' ? 'تعديل المعاملات' : 'Edit Rule'}
                           >
                             <Edit2 className="w-3.5 h-3.5 text-amber-500" />
@@ -744,7 +742,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                             <button
                               type="button"
                               onClick={() => handleDeleteRule(rule.id)}
-                              className="p-1 hover:text-rose-450 text-slate-400 rounded hover:bg-slate-900 transition cursor-pointer"
+                              className={`p-1 ${isLightMode ? 'hover:text-rose-450 text-slate-500 hover:bg-slate-100' : 'hover:text-rose-450 text-slate-400 hover:bg-slate-900'} rounded transition cursor-pointer`}
                               title={lang === 'ar' ? 'حذف هذه القاعدة المخصصة' : 'Delete Custom Rule'}
                             >
                               <Trash2 className="w-3.5 h-3.5 text-rose-500" />
@@ -755,26 +753,26 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                         {/* Enabled Switch */}
                         <button
                           onClick={() => handleToggleRule(rule.id)}
-                          className="text-slate-400 hover:text-white transition cursor-pointer"
+                          className={`${isLightMode ? 'text-slate-500 hover:text-slate-800' : 'text-slate-400 hover:text-white'} transition cursor-pointer`}
                           title={rule.enabled ? (lang === 'ar' ? 'تعطيل القاعدة' : 'Disable Trigger') : (lang === 'ar' ? 'tفعيل القاعدة' : 'Enable Trigger')}
                         >
                           {rule.enabled ? (
                             <ToggleRight className="w-8 h-8 text-emerald-500" />
                           ) : (
-                            <ToggleLeft className="w-8 h-8 text-slate-600" />
+                            <ToggleLeft className={`w-8 h-8 ${isLightMode ? 'text-slate-300' : 'text-slate-600'}`} />
                           )}
                         </button>
 
                         {/* Weight Slider input */}
-                        <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                        <div className={`flex items-center gap-2 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} p-1.5 rounded-lg border`}>
                           <div className="flex flex-col">
-                            <span className="text-[8px] font-mono text-slate-500 text-center uppercase">{lang === 'ar' ? 'الوزن %' : 'WEIGHT %'}</span>
+                            <span className={`text-[8px] font-mono ${isLightMode ? 'text-slate-400' : 'text-slate-500'} text-center uppercase`}>{lang === 'ar' ? 'الوزن %' : 'WEIGHT %'}</span>
                             <input
                               type="number"
                               disabled={!rule.enabled}
                               value={rule.baseWeight}
                               onChange={(e) => handleWeightChange(rule.id, parseInt(e.target.value) || 0)}
-                              className="w-12 text-center text-xs font-mono font-black bg-transparent border-0 text-white outline-none focus:text-blue-400 disabled:opacity-30"
+                              className={`w-12 text-center text-xs font-mono font-black bg-transparent border-0 outline-none ${isLightMode ? 'text-slate-800 focus:text-blue-600' : 'text-white focus:text-blue-400'} disabled:opacity-30`}
                             />
                           </div>
                           
@@ -796,8 +794,8 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
             </div>
 
             {/* Risk Engine Rule Editor form card */}
-            <form onSubmit={handleSaveRuleForm} className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 shadow-lg">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+            <form onSubmit={handleSaveRuleForm} className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-4 shadow-lg`}>
+              <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} pb-3`}>
                 <h3 className="text-xs font-black uppercase text-amber-400 tracking-wider flex items-center gap-2">
                   {editingRuleId ? <Edit2 className="w-4 h-4 text-amber-500" /> : <PlusCircle className="w-4 h-4 text-emerald-500" />}
                   <span>
@@ -820,7 +818,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                       setFormDescAr("");
                       setFormDescEn("");
                     }}
-                    className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 bg-slate-950 px-2 py-1 rounded border border-slate-800 cursor-pointer"
+                    className={`text-[10px] ${isLightMode ? 'text-slate-500 hover:text-slate-800 bg-slate-50 border-slate-200' : 'text-slate-400 hover:text-white bg-slate-950 border-slate-800'} flex items-center gap-1 px-2 py-1 rounded border cursor-pointer`}
                   >
                     <XCircle className="w-3.5 h-3.5" />
                     <span>{lang === 'ar' ? 'إلغاء التعديل' : 'Cancel Edit'}</span>
@@ -830,29 +828,29 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'الاسم بالإنجليزية (Name EN)' : 'Rule Name (English)'}</label>
+                  <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'الاسم بالإنجليزية (Name EN)' : 'Rule Name (English)'}</label>
                   <input
                     type="text"
                     placeholder="e.g., Excessive Idle Period Detected"
                     value={formNameEn}
                     onChange={(e) => setFormNameEn(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 outline-none focus:border-blue-550 h-10"
+                    className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 outline-none focus:border-blue-550 h-10`}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'الاسم بالعربية (Name AR)' : 'Rule Name (Arabic)'}</label>
+                  <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'الاسم بالعربية (Name AR)' : 'Rule Name (Arabic)'}</label>
                   <input
                     type="text"
                     placeholder="مثال: رصد فترة خمول مفرطة"
                     value={formNameAr}
                     onChange={(e) => setFormNameAr(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 outline-none focus:border-blue-550 h-10"
+                    className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 outline-none focus:border-blue-550 h-10`}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-bold block">
+                  <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>
                     {lang === 'ar' ? 'الرمز التعريفي الفريد (Metric Key Code)' : 'Unique Metric Key (Alphanumeric Code)'}
                   </label>
                   <input
@@ -861,13 +859,13 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                     disabled={!!editingRuleId}
                     value={formMetricKey}
                     onChange={(e) => setFormMetricKey(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 outline-none focus:border-blue-550 h-10 disabled:opacity-40"
+                    className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 outline-none focus:border-blue-550 h-10 disabled:opacity-40`}
                   />
-                  <span className="text-[9px] text-slate-500 block">{lang === 'ar' ? 'رمز تليمتري مخصص للمحدد السلوكي' : 'Unique metric name used by the dynamic engine.'}</span>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block`}>{lang === 'ar' ? 'رمز تليمتري مخصص للمحدد السلوكي' : 'Unique metric name used by the dynamic engine.'}</span>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-bold block">
+                  <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>
                     {lang === 'ar' ? 'الوزن الافتراضي (Default Weight Points %)' : 'Rule Base Weight (Points 0-100)'}
                   </label>
                   <div className="flex items-center gap-3">
@@ -877,7 +875,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                       max="100"
                       value={formWeight}
                       onChange={(e) => setFormWeight(Math.max(1, Math.min(100, parseInt(e.target.value) || 0)))}
-                      className="w-20 bg-slate-950 border border-slate-800 text-slate-205 rounded-lg py-2 px-3 text-center outline-none focus:border-blue-500 h-10 font-mono font-bold"
+                      className={`w-20 ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-205'} rounded-lg py-2 px-3 text-center outline-none focus:border-blue-500 h-10 font-mono font-bold`}
                     />
                     <input
                       type="range"
@@ -892,14 +890,14 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
                 <div className="md:col-span-2 space-y-1.5">
                   <div className="flex justify-between items-center flex-wrap gap-2">
-                    <label className="text-slate-400 font-bold flex items-center gap-1 text-[11px]">
+                    <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold flex items-center gap-1 text-[11px]`}>
                       <Code className="w-3.5 h-3.5 text-blue-450" />
                       <span>{lang === 'ar' ? 'شرط المعادلة المنطقية لدرجة الخطر (Condition Formula)' : 'Dynamic Evaluation Formula'}</span>
                     </label>
                     
                     {/* Helper Variables Quick Injectors */}
                     <div className="flex flex-wrap gap-1">
-                      <span className="text-[9.5px] text-slate-500 font-bold self-center mr-1">Inject:</span>
+                      <span className={`text-[9.5px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-bold self-center mr-1`}>Inject:</span>
                       {[
                         { word: 'tabSwitchesCount', label: 'Tab Switches' },
                         { word: 'copyCount', label: 'Copies' },
@@ -912,7 +910,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                           key={v.word}
                           type="button"
                           onClick={() => setFormFormula((prev) => prev ? prev + ' ' + v.word : v.word)}
-                          className="px-2 py-0.5 rounded bg-slate-950 hover:bg-slate-800 text-[10px] text-blue-400 font-mono border border-slate-850 cursor-pointer"
+                          className={`px-2 py-0.5 rounded ${isLightMode ? 'bg-slate-100 hover:bg-slate-200 border-slate-300' : 'bg-slate-950 hover:bg-slate-800 border-slate-850'} text-[10px] text-blue-400 font-mono border cursor-pointer`}
                         >
                           {v.label}
                         </button>
@@ -925,34 +923,34 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                     placeholder="e.g., tabSwitchesCount > 5 || outOfBoundsCount > 8"
                     value={formFormula}
                     onChange={(e) => setFormFormula(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-201 rounded-lg py-2.5 px-3 outline-none focus:border-blue-500 font-mono font-bold tracking-wide text-xs"
+                    className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-201'} rounded-lg py-2.5 px-3 outline-none focus:border-blue-500 font-mono font-bold tracking-wide text-xs`}
                   />
-                  <div className="p-2 bg-slate-950 rounded border border-slate-850 text-[10px] text-slate-450 leading-relaxed font-mono">
+                  <div className={`p-2 ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-500' : 'bg-slate-950 border-slate-850 text-slate-450'} rounded border text-[10px] leading-relaxed font-mono`}>
                     <span className="text-rose-455 font-bold">{lang === 'ar' ? 'المعاملات المقبولة:' : 'Supported syntax:'}</span> {` >, <, >=, <=, ===, !==, ||, &&, +, -, *, /`}
                     <br />
-                    <span className="text-amber-500 font-bold">{lang === 'ar' ? 'مثال:' : 'Example:'}</span> <code className="text-slate-350">{`tabSwitchesCount > 5 && mouseOutSeconds > 60`}</code>
+                    <span className="text-amber-500 font-bold">{lang === 'ar' ? 'مثال:' : 'Example:'}</span> <code className={`${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>{`tabSwitchesCount > 5 && mouseOutSeconds > 60`}</code>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'الوصف بالإنجليزية (Description EN)' : 'Description (English)'}</label>
+                  <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'الوصف بالإنجليزية (Description EN)' : 'Description (English)'}</label>
                   <textarea
                     rows={2}
                     placeholder="Describe what triggers this rule..."
                     value={formDescEn}
                     onChange={(e) => setFormDescEn(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-250 rounded-lg py-2 px-3 outline-none focus:border-blue-500 leading-normal text-xs"
+                    className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-250'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 leading-normal text-xs`}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'الوصف بالعربية (Description AR)' : 'Description (Arabic)'}</label>
+                  <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'الوصف بالعربية (Description AR)' : 'Description (Arabic)'}</label>
                   <textarea
                     rows={2}
                     placeholder="حالة حدوث تفعيل هذا السلوك للطلبة..."
                     value={formDescAr}
                     onChange={(e) => setFormDescAr(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 text-slate-250 rounded-lg py-2 px-3 outline-none focus:border-blue-500 leading-normal text-xs"
+                    className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-250'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 leading-normal text-xs`}
                   />
                 </div>
               </div>
@@ -976,7 +974,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
             <div className="flex justify-end gap-3">
               <button
                 onClick={fetchData}
-                className="px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 cursor-pointer transition flex items-center gap-2 select-none"
+                className={`px-4 py-2.5 rounded-lg ${isLightMode ? 'bg-white border-slate-200 text-slate-600 hover:text-slate-800 hover:bg-slate-100' : 'bg-slate-900 border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800'} text-xs font-bold cursor-pointer transition flex items-center gap-2 select-none`}
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>{lang === 'ar' ? 'تجاهل وإرجاع الافتراضي' : 'Revert Defaults'}</span>
@@ -995,17 +993,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
           {/* Right Metrics summary container */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 shadow-lg">
+            <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-4 shadow-lg`}>
               <h3 className="text-xs font-black uppercase text-blue-400 tracking-wider">
                 {lang === 'ar' ? 'نبض النزاهة والتحليل التراكمي' : 'Cumulative Index Bounds'}
               </h3>
               
-              <div className="p-4 bg-slate-950 rounded-lg border border-slate-800 text-center space-y-1">
-                <span className="text-[10px] text-slate-500 font-bold block">{lang === 'ar' ? 'الحد الأقصى للنقاط المتراكمة بقواعدك النشطة' : 'Active Maximum Potential Risk Points'}</span>
+              <div className={`p-4 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} rounded-lg border text-center space-y-1`}>
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-bold block`}>{lang === 'ar' ? 'الحد الأقصى للنقاط المتراكمة بقواعدك النشطة' : 'Active Maximum Potential Risk Points'}</span>
                 <span className="text-3xl font-black font-mono text-blue-400 block tracking-tight">
-                  {totalPossibleScore} <span className="text-xs font-bold text-slate-400">/ 100</span>
+                  {totalPossibleScore} <span className={`text-xs font-bold ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>/ 100</span>
                 </span>
-                <p className="text-[10px] text-slate-400 leading-normal block pt-1">
+                <p className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} leading-normal block pt-1`}>
                   {lang === 'ar' 
                     ? 'يتم دمج ومعايرة النقاط بما لا يتجاوز 100% لتحديد مستويات الخطورة (منخفض، متوسط، عالي) وعتبة الاسترداد الأمنية.'
                     : 'Values are dynamically unified capped at 100% maximum to assign threat groups (low, medium, high) upon Moodle exam returns.'
@@ -1013,9 +1011,9 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                 </p>
               </div>
 
-              <div className="bg-slate-950 border border-slate-800 p-4 rounded-xl space-y-3 text-xs leading-relaxed font-sans">
-                <h4 className="text-[11px] font-black text-slate-300 uppercase block">{lang === 'ar' ? 'كيف تحتسب درجة الخطر؟' : 'Threat Score Calculus Formula'}</h4>
-                <div className="text-[11px] text-slate-400 space-y-2 leading-relaxed">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} p-4 rounded-xl space-y-3 text-xs leading-relaxed font-sans`}>
+                <h4 className={`text-[11px] font-black ${isLightMode ? 'text-slate-600' : 'text-slate-300'} uppercase block`}>{lang === 'ar' ? 'كيف تحتسب درجة الخطر؟' : 'Threat Score Calculus Formula'}</h4>
+                <div className={`text-[11px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} space-y-2 leading-relaxed`}>
                   <p>
                     {lang === 'ar' 
                       ? '١. عند استلام بيانات التليمتري من متصفح الطالب، يقوم السيرفر بمسح الأخطاء والقيم.'
@@ -1043,8 +1041,8 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* AI Providers configurations fields */}
           <div className="lg:col-span-8 space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 shadow-lg">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+            <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-4 shadow-lg`}>
+              <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} pb-3`}>
                 <h3 className="text-xs font-black uppercase text-blue-400 tracking-wider">
                   {lang === 'ar' ? 'بوابة ربط قنوات النماذج التوليدية للامتياز الأكاديمي' : 'External LLM Integration & Endpoint Specifications'}
                 </h3>
@@ -1057,18 +1055,18 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               {loadingConfig ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-2">
                   <RefreshCw className="w-6 h-6 text-blue-500 animate-spin" />
-                  <p className="text-xs text-slate-400">{lang === 'ar' ? 'جاري قراءة معايير قنوات السيرفر...' : 'Reading server federated keys...'}</p>
+                  <p className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>{lang === 'ar' ? 'جاري قراءة معايير قنوات السيرفر...' : 'Reading server federated keys...'}</p>
                 </div>
               ) : (
                 <div className="space-y-4 text-xs font-sans">
                   {/* Provider Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'جهة خدمة الذكاء الاصطناعي (Provider)' : 'AI Provider Service'}</label>
+                      <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'جهة خدمة الذكاء الاصطناعي (Provider)' : 'AI Provider Service'}</label>
                       <select
                         value={aiConfig.provider}
                         onChange={(e) => setAiConfig(prev => ({ ...prev, provider: e.target.value as any }))}
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10"
+                        className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10`}
                       >
                         <option value="gemini">Google Gemini API (Default)</option>
                         <option value="openai">OpenAI (ChatGPT)</option>
@@ -1078,11 +1076,11 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'الموديل اللغوي المختار (LLM Model)' : 'Selected Model'}</label>
+                      <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'الموديل اللغوي المختار (LLM Model)' : 'Selected Model'}</label>
                       <select
                         value={aiConfig.selectedModel}
                         onChange={(e) => setAiConfig(prev => ({ ...prev, selectedModel: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10"
+                        className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10`}
                       >
                         {aiConfig.provider === 'gemini' ? (
                           <>
@@ -1112,7 +1110,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
                   {/* API Key Connection */}
                   <div className="space-y-1.5">
-                    <label className="text-slate-400 font-bold block">
+                    <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>
                       {lang === 'ar' ? 'رمز المصادقة البرمجي (API Key / Auth Secret)' : 'API Secret Access Key'}
                     </label>
                     <div className="relative">
@@ -1121,11 +1119,11 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                         placeholder="••••••••••••••••••••••••••••••••••••••••••••"
                         value={aiConfig.apiKey}
                         onChange={(e) => setAiConfig(prev => ({ ...prev, apiKey: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 pl-10 pr-3 outline-none focus:border-blue-500 font-mono tracking-widest h-10"
+                        className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 pl-10 pr-3 outline-none focus:border-blue-500 font-mono tracking-widest h-10`}
                       />
-                      <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3.5" />
+                      <Lock className={`w-4 h-4 ${isLightMode ? 'text-slate-400' : 'text-slate-500'} absolute left-3 top-3.5`} />
                     </div>
-                    <p className="text-[10px] text-slate-400 block font-normal leading-normal">
+                    <p className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} block font-normal leading-normal`}>
                       {lang === 'ar' 
                         ? 'إذا كان الحظر والتحميل مدار بواسطة الأمان الفيدرالي في .env، فستتم قراءة GEMINI_API_KEY تلقائياً. يمكنك تجاوزه بحفظ مفتاح مخصص هنا.'
                         : 'If managed inside the workspace settings or .env file, the model defaults to GEMINI_API_KEY. Leaving this bank will fallback cleanly onto your platform settings.'
@@ -1135,13 +1133,13 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
                   {/* Data strategy Selector */}
                   <div className="space-y-1.5">
-                    <label className="text-slate-400 font-bold block">
+                    <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>
                       {lang === 'ar' ? 'استراتيجية هيكلة وتعبئة مدخلات البيانات (Data Transmission Packaging Strategy)' : 'Data Transmission & Packing Strategy'}
                     </label>
                     <select
                       value={aiConfig.dataStrategy}
                       onChange={(e) => setAiConfig(prev => ({ ...prev, dataStrategy: e.target.value as any }))}
-                      className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10"
+                      className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10`}
                     >
                       <option value="all_at_once_batch">
                         {lang === 'ar' ? 'إرسال كافة حضور وأوراق الحل دفعة واحدة ومقارنة كاملة (All-at-once Bundle Matrix)' : 'All-at-once Class Bundle (Analyze all students in a single prompt)'}
@@ -1156,7 +1154,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                         {lang === 'ar' ? 'المقارنة الفردية المتجهة: فحص الطالب ضد معيار الحل وحل المودل (Single Student against baseline answers)' : 'Single candidate audit (Compare student answer onto baseline textbook keys)'}
                       </option>
                     </select>
-                    <p className="text-[10px] text-slate-450 block font-normal leading-normal">
+                    <p className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-450'} block font-normal leading-normal`}>
                       {lang === 'ar' 
                         ? 'تتحكم هذه الاستراتيجية في شكل حزم البيانات المصدرة للمحرك الخارجي لتوفير التكلفة وتقليل استهلاك الرموز (Tokens Accuracy).'
                         : 'This governs how JSON schemas are packed and submitted to the API, controlling token efficiency and plagiarism diagnostic granularity.'
@@ -1167,23 +1165,23 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   {/* Prompt Textareas */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'الطلب النموذجي باللغة العربية (Prompt Template)' : 'Arabic Prompt Template'}</label>
+                      <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'الطلب النموذجي باللغة العربية (Prompt Template)' : 'Arabic Prompt Template'}</label>
                       <textarea
                         rows={5}
                         value={aiConfig.promptTemplateAr}
                         onChange={(e) => setAiConfig(prev => ({ ...prev, promptTemplateAr: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-305 rounded-lg py-2 px-3 outline-none focus:border-blue-500 font-mono text-[10.5px] leading-relaxed"
+                        className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-slate-950 border-slate-800 text-slate-305'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 font-mono text-[10.5px] leading-relaxed`}
                         placeholder="صيغة الطلب..."
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'الطلب النموذجي باللغة الإنجليزية (Prompt Template)' : 'English Prompt Template'}</label>
+                      <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'الطلب النموذجي باللغة الإنجليزية (Prompt Template)' : 'English Prompt Template'}</label>
                       <textarea
                         rows={5}
                         value={aiConfig.promptTemplateEn}
                         onChange={(e) => setAiConfig(prev => ({ ...prev, promptTemplateEn: e.target.value }))}
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-305 rounded-lg py-2 px-3 outline-none focus:border-blue-500 font-mono text-[10.5px] leading-relaxed"
+                        className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-slate-950 border-slate-800 text-slate-305'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 font-mono text-[10.5px] leading-relaxed`}
                         placeholder="Prompt specifications..."
                       />
                     </div>
@@ -1206,30 +1204,30 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
           {/* Prompt Variables Card */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 shadow-lg">
+            <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-4 shadow-lg`}>
               <h3 className="text-xs font-black uppercase text-blue-400 tracking-wider">
                 {lang === 'ar' ? 'المتغيرات الصالحة للتبديل' : 'Dynamic Injection Variables'}
               </h3>
               
               <div className="space-y-2 text-xs font-mono select-all">
-                <div className="p-2 bg-slate-950 rounded border border-slate-800 flex justify-between items-center">
+                <div className={`p-2 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} rounded border flex justify-between items-center`}>
                   <span className="text-blue-400 font-bold">{"{{student_a_answers}}"}</span>
-                  <span className="text-[10px] text-slate-400">{lang === 'ar' ? 'إجابات الطالب الأول' : 'Student A Answer set'}</span>
+                  <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>{lang === 'ar' ? 'إجابات الطالب الأول' : 'Student A Answer set'}</span>
                 </div>
                 
-                <div className="p-2 bg-slate-950 rounded border border-slate-800 flex justify-between items-center">
+                <div className={`p-2 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} rounded border flex justify-between items-center`}>
                   <span className="text-blue-400 font-bold">{"{{student_b_answers}}"}</span>
-                  <span className="text-[10px] text-slate-400">{lang === 'ar' ? 'إجابات الطالب الثاني' : 'Student B Answer set'}</span>
+                  <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>{lang === 'ar' ? 'إجابات الطالب الثاني' : 'Student B Answer set'}</span>
                 </div>
 
-                <div className="p-2 bg-slate-950 rounded border border-slate-800 flex justify-between items-center">
+                <div className={`p-2 ${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} rounded border flex justify-between items-center`}>
                   <span className="text-blue-400 font-bold">{"{{exam_metadata}}"}</span>
-                  <span className="text-[10px] text-slate-400">{lang === 'ar' ? 'تفاصيل ومعلومات الاختبار' : 'Exam metadata specs'}</span>
+                  <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'}`}>{lang === 'ar' ? 'تفاصيل ومعلومات الاختبار' : 'Exam metadata specs'}</span>
                 </div>
               </div>
 
-              <div className="bg-slate-950 p-4 border border-slate-820 rounded-xl text-xs space-y-2 font-sans text-slate-400 leading-normal">
-                <h4 className="font-extrabold text-slate-300 block">{lang === 'ar' ? 'دقة الرصد ومخرجات التواطؤ' : 'Structural Similarity Indexing'}</h4>
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-500' : 'bg-slate-950 border-slate-820 text-slate-400'} p-4 border rounded-xl text-xs space-y-2 font-sans leading-normal`}>
+                <h4 className={`font-extrabold ${isLightMode ? 'text-slate-700' : 'text-slate-300'} block`}>{lang === 'ar' ? 'دقة الرصد ومخرجات التواطؤ' : 'Structural Similarity Indexing'}</h4>
                 <p>
                   {lang === 'ar'
                     ? 'يقوم محرك الذكاء الاصطناعي بتحليل الأوراق بشكل عميق متجاوزاً تشابه النصوص الحرفي (Lexical Similarity) إلى التشابه الدلالي (Semantic Plagiarism)، مما يضمن تحديد الحلول المنتجة بواسطة برمجيات مساعدة أو الغش الصامت بدقة متناهية.'
@@ -1243,15 +1241,15 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-entry">
           {/* Column 1: Time Calculation Dashboard */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-5 shadow-lg">
-            <div className="flex justify-between items-center border-b border-slate-850 pb-3">
+          <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-5 shadow-lg`}>
+            <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pb-3`}>
               <h3 className="text-xs font-black uppercase text-blue-400 tracking-wider flex items-center gap-1.5">
                 <Clock className="w-4 h-4 text-blue-500" />
                 <span>{lang === 'ar' ? 'معايير حساب وتقدير زمن الامتحان' : 'Exam Baseline Duration Parameters'}</span>
               </h3>
             </div>
             
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'} leading-relaxed`}>
               {lang === 'ar' 
                 ? 'تحتوي هذه اللوحة على الخوارزمية الخاصة بحساب زمن الامتحان المتوقع/المقدر للطلاب بناءً على أوزان صعوبة الأسئلة وضبط تقدير المدرس المباشر.'
                 : 'Configure the global timing expectance variables. The engine estimates perfect exam runtimes for each student based on the baseline complexity coefficients.'
@@ -1260,7 +1258,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
+                <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} block mb-1`}>
                   {lang === 'ar' ? 'زمن السؤال للاختبار السهل (دقيقة لكل سؤال):' : 'Easy Exam Questions Base (Minutes/Question):'}
                 </label>
                 <div className="flex gap-4 items-center">
@@ -1277,7 +1275,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
+                <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} block mb-1`}>
                   {lang === 'ar' ? 'زمن السؤال للاختبار المتوسط (دقيقة لكل سؤال):' : 'Medium Exam Questions Base (Minutes/Question):'}
                 </label>
                 <div className="flex gap-4 items-center">
@@ -1294,7 +1292,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
+                <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} block mb-1`}>
                   {lang === 'ar' ? 'زمن السؤال للاختبار الصعب (دقيقة لكل سؤال):' : 'Hard Exam Questions Base (Minutes/Question):'}
                 </label>
                 <div className="flex gap-4 items-center">
@@ -1311,7 +1309,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
+                <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} block mb-1`}>
                   {lang === 'ar' ? 'معامل تقدير المعلم المباشر (مضاعف الوقت المقدر):' : 'Teacher Adjustment Multiplier (Speed Coefficient):'}
                 </label>
                 <div className="flex gap-4 items-center">
@@ -1325,7 +1323,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                     {timingConfig.teacherTimeAdjustment.toFixed(1)}x
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-500 block mt-1">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} block mt-1`}>
                   {lang === 'ar' ? '* يستعمل لرفع أو خفض أزمنة الحل التقديرية بناءً على مستوى دفعة الطلاب الحالي.' : '* Alters estimated runtimes to adapt to student levels dynamic coefficients.'}
                 </span>
               </div>
@@ -1343,14 +1341,14 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
             </div>
 
             {/* Dynamics Live Exams Expectancy Simulation View */}
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-850 space-y-3">
-              <h4 className="text-xs font-bold text-slate-300">
+            <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850'} p-4 rounded-xl border space-y-3`}>
+              <h4 className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'}`}>
                 {lang === 'ar' ? 'بروفة حية لتقديرات زمن الامتحانات الحالية:' : 'Live Estimate Simulation Table:'}
               </h4>
               <div className="overflow-x-auto">
-                <table className="w-full text-[11px] text-slate-400 text-left border-collapse">
+                <table className={`w-full text-[11px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} text-left border-collapse`}>
                   <thead>
-                    <tr className="border-b border-slate-850 text-slate-500 text-[10.5px]">
+                    <tr className={`border-b ${isLightMode ? 'border-slate-200 text-slate-400' : 'border-slate-850 text-slate-500'} text-[10.5px]`}>
                       <th className={`pb-2 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>{lang === 'ar' ? 'الامتحان' : 'Exam'}</th>
                       <th className="pb-2 text-center">{lang === 'ar' ? 'الصعوبة' : 'Diff'}</th>
                       <th className="pb-2 text-center">{lang === 'ar' ? 'الأسئلة' : 'Qcount'}</th>
@@ -1369,8 +1367,8 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                       const expectedDuration = Math.round(qCount * baseMin * timingConfig.teacherTimeAdjustment);
                       
                       return (
-                        <tr key={ex.id} className="border-b border-slate-900/50 hover:bg-slate-900/20 text-[10px]">
-                          <td className={`py-2 truncate max-w-[130px] font-bold text-slate-300 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+                        <tr key={ex.id} className={`border-b ${isLightMode ? 'border-slate-200 hover:bg-slate-100' : 'border-slate-900/50 hover:bg-slate-900/20'} text-[10px]`}>
+                          <td className={`py-2 truncate max-w-[130px] font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
                             {lang === 'ar' ? ex.nameAr : ex.nameEn}
                           </td>
                           <td className="py-2 text-center">
@@ -1378,11 +1376,11 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                               {ex.difficulty}
                             </span>
                           </td>
-                          <td className="py-2 text-center font-mono font-bold text-slate-405">{qCount}</td>
+                          <td className={`py-2 text-center font-mono font-bold ${isLightMode ? 'text-slate-500' : 'text-slate-405'}`}>{qCount}</td>
                           <td className="py-2 text-center font-mono font-black text-amber-400 text-xs">
                             {expectedDuration} دقيقة
                           </td>
-                          <td className="py-2 text-center font-mono text-slate-500">{ex.timeLimit} دقيقة</td>
+                          <td className={`py-2 text-center font-mono ${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>{ex.timeLimit} دقيقة</td>
                         </tr>
                       );
                     })}
@@ -1393,15 +1391,15 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
           </div>
 
           {/* Column 2: Plagiarism and Copy-Paste Formula Controls */}
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-5 shadow-lg">
-            <div className="flex justify-between items-center border-b border-slate-850 pb-3">
+          <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-5 shadow-lg`}>
+            <div className={`flex justify-between items-center border-b ${isLightMode ? 'border-slate-200' : 'border-slate-850'} pb-3`}>
               <h3 className="text-xs font-black uppercase text-red-400 tracking-wider flex items-center gap-1.5">
                 <Settings2 className="w-4 h-4 text-red-500" />
                 <span>{lang === 'ar' ? 'معادلة فحص النسخ واللصق الثنائية' : 'Bidirectional Plagiarism Math Formula'}</span>
               </h3>
             </div>
 
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'} leading-relaxed`}>
               {lang === 'ar' 
                 ? 'وفق طلبك، قمنا بدعم تتبع النسخ واللصق على مستوى كل سؤال ومستوى الطالب. إذا قام الطالب بنسخ السؤال ولصق الجواب فورا بنمط ChatGPT، يتعرف النظام تلقائيا على هذا المسار لحساب مؤشر الغش الحقيقي بناءً على عتبة النسبة المحددة.'
                 : 'Bidirectional telemetry monitors copy/paste both globally and per-question level. If students copy questions to an AI model and paste outcomes immediately, the formula exposes maximum risk based on adjustable percentage anchors.'
@@ -1410,7 +1408,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
+                <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} block mb-1`}>
                   {lang === 'ar' ? 'سقف نقاط خطورة النسخ واللصق الكلي (الوزن الأقصى):' : 'Plagiarism Max Risk Coefficient (Weight Peak):'}
                 </label>
                 <div className="flex gap-4 items-center">
@@ -1424,13 +1422,13 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                     {copyPasteConfig.maxRiskPoints}ن
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-500 mt-1 block">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} mt-1 block`}>
                   {lang === 'ar' ? '* تمثل القيمة القصوى من 100 والتي يكسبها الطالب عند تجاوز مؤشرات الغش المعرفة أدناه.' : '* Maximum risk value points applied out of 100 on rule threshold triggers.'}
                 </span>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
+                <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} block mb-1`}>
                   {lang === 'ar' ? 'الحد الأدنى لعملية النسخ واللصق بالسؤال الواحد للتصنيف كغش:' : 'Simultaneous Copy-Paste ChatGPT Loop (Min Count/Single Question):'}
                 </label>
                 <div className="flex gap-4 items-center">
@@ -1447,7 +1445,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">
+                <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'} block mb-1`}>
                   {lang === 'ar' ? 'عتبة نسبة الأسئلة المخترقة لتطبيق العقوبة الكلية (100% من النقاط):' : 'Abuse Ratio Trigger Coefficient (100% Risk Ceiling Level):'}
                 </label>
                 <div className="flex gap-4 items-center">
@@ -1461,7 +1459,7 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                     {(copyPasteConfig.abusedMultiplier * 100).toFixed(0)}%
                   </span>
                 </div>
-                <span className="text-[10px] text-slate-500 mt-1 block">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} mt-1 block`}>
                   {lang === 'ar' ? '* مثال: إذا أسيء استخدام 20% فأكثر من الأسئلة، تضاف نقاط خطر كبرى 20/20 للطالب.' : '* Example: If 20% or more questions of the exam present abuse, full risk points allocated instantly.'}
                 </span>
               </div>
@@ -1479,34 +1477,34 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
             </div>
 
             {/* Simulated Live Mathematical Output Previewer */}
-            <div className="bg-slate-950 p-4 rounded-xl border border-red-500/10 space-y-3">
-              <h4 className="text-xs font-bold text-red-400 flex items-center justify-between border-b border-slate-900 pb-1.5">
+            <div className={`${isLightMode ? 'bg-slate-50 border-red-500/10' : 'bg-slate-950 border-red-500/10'} p-4 rounded-xl border space-y-3`}>
+              <h4 className={`text-xs font-bold text-red-400 flex items-center justify-between border-b ${isLightMode ? 'border-slate-200' : 'border-slate-900'} pb-1.5`}>
                 <span>{lang === 'ar' ? 'محاكي الخوارزمية الفوري (Interactive Calculator):' : 'Interactive Plagiarism Equation simulator:'}</span>
-                <span className="text-[10px] text-slate-500 underline font-mono">100% Dynamic</span>
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} underline font-mono`}>100% Dynamic</span>
               </h4>
               <div className="grid grid-cols-2 gap-4 text-[10.5px]">
-                <div className="space-y-1 bg-slate-900/40 p-2.5 rounded border border-slate-850">
-                  <span className="text-[9px] text-slate-500 uppercase font-bold block">{lang === 'ar' ? 'طالب افتراضي أ وب:' : 'Simulation Metrics'}</span>
-                  <p className="text-[10.5px] font-bold text-slate-300">
+                <div className={`space-y-1 ${isLightMode ? 'bg-white/40 border-slate-200' : 'bg-slate-900/40 border-slate-850'} p-2.5 rounded border`}>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} uppercase font-bold block`}>{lang === 'ar' ? 'طالب افتراضي أ وب:' : 'Simulation Metrics'}</span>
+                  <p className={`text-[10.5px] font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-300'}`}>
                     {lang === 'ar' ? 'اختبار مكون من ٥ أسئلة' : '5-Question Exam Pattern'}
                   </p>
-                  <p className="text-[10px] text-slate-400 mt-0.5 leading-relaxed">
+                  <p className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} mt-0.5 leading-relaxed`}>
                     {lang === 'ar' ? 'رُصدت ثنائية النسخ-اللصق في سؤال واحد.' : 'Plagiarism detected on exactly 1 out of 5 questions.'}
                   </p>
                 </div>
 
-                <div className="space-y-1 bg-slate-900/40 p-2.5 rounded border border-slate-850 flex flex-col justify-center">
-                  <span className="text-[9px] text-slate-500 uppercase font-bold block">{lang === 'ar' ? 'درجة الخطر التلقائية المحتسب:' : 'Calculated Cheat Risk Output'}</span>
-                  <p className="text-xs font-black text-white flex items-baseline gap-1 mt-0.5">
+                <div className={`space-y-1 ${isLightMode ? 'bg-white/40 border-slate-200' : 'bg-slate-900/40 border-slate-850'} p-2.5 rounded border flex flex-col justify-center`}>
+                  <span className={`text-[9px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} uppercase font-bold block`}>{lang === 'ar' ? 'درجة الخطر التلقائية المحتسب:' : 'Calculated Cheat Risk Output'}</span>
+                  <p className={`text-xs font-black ${isLightMode ? 'text-slate-800' : 'text-white'} flex items-baseline gap-1 mt-0.5`}>
                     <span className="text-base text-red-400">
                       { 0.20 >= copyPasteConfig.abusedMultiplier 
                         ? copyPasteConfig.maxRiskPoints 
                         : Math.round(copyPasteConfig.maxRiskPoints * (0.20 / copyPasteConfig.abusedMultiplier))
                       }
                     </span>
-                    <span className="text-[10px] text-slate-500 font-mono">/ {copyPasteConfig.maxRiskPoints} {lang === 'ar' ? 'نقطة' : 'points'}</span>
+                    <span className={`text-[10px] ${isLightMode ? 'text-slate-400' : 'text-slate-500'} font-mono`}>/ {copyPasteConfig.maxRiskPoints} {lang === 'ar' ? 'نقطة' : 'points'}</span>
                   </p>
-                  <span className="text-[9px] font-mono font-bold text-slate-400 mt-1">
+                  <span className={`text-[9px] font-mono font-bold ${isLightMode ? 'text-slate-500' : 'text-slate-400'} mt-1`}>
                     { 0.20 >= copyPasteConfig.abusedMultiplier 
                       ? (lang === 'ar' ? 'خطورة قصوى لتخطي العتبة' : 'Max risk: ceiling triggered!')
                       : (lang === 'ar' ? `خطورة نسبية (${Math.round((0.20 / copyPasteConfig.abusedMultiplier) * 100)}%)` : 'Relative risk ratio Applied.')
@@ -1520,15 +1518,15 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
       )}
 
       {activeSubTab === 'anomaly_weights' && (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6 shadow-xl">
-          <div className="border-b border-slate-800 pb-4">
+        <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-6 space-y-6 shadow-xl`}>
+          <div className={`border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} pb-4`}>
             <h3 className="text-sm font-black uppercase text-[#6366f1] tracking-wider flex items-center gap-1.5">
               <Settings2 className="w-5 h-5 text-[#6366f1]" />
               <span>
                 {lang === 'ar' ? 'تخصيص الأوزان الرياضية لمؤشرات الغش (Risk Score Mathematics)' : 'Mathematical Anomaly Category Weightings'}
               </span>
             </h3>
-            <p className="text-xs text-slate-400 mt-1.5 leading-normal">
+            <p className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'} mt-1.5 leading-normal`}>
               {lang === 'ar' 
                 ? 'خصص القيمة الرياضية (بالنقاط) لكل مخالفة سلوكية مرصودة لحساب درجة خطورة الطالب الكلية. يتم تطبيق الأوزان في الوقت الفعلي على جميع جلسات الامتحان النشطة.'
                 : 'Define custom mathematical penalty weightings for each automated telemetry infraction. These metrics compose the final student Risk Score (0-100%).'
@@ -1544,9 +1542,9 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               </h4>
 
               {/* Slider for Tab Switch */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'تبديل نافذة غريبة (Tab Switch):' : 'Tab Switch Event Penalty:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">
@@ -1558,17 +1556,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.tabSwitch}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, tabSwitch: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-indigo-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-indigo-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-550 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-550'} block leading-tight`}>
                   {lang === 'ar' ? '* تُسند غرامة لكل تكرار في مغادرة الطالب لنافذة الحل.' : '* Multiplied per each browser tab switch or window blur caught.'}
                 </span>
               </div>
 
               {/* Slider for Paste */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'عملية اللصق (Paste Event):' : 'Paste Event Action Penalty:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">
@@ -1580,17 +1578,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.paste}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, paste: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-555 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-555'} block leading-tight`}>
                   {lang === 'ar' ? '* تُضاف لكل تكرار لعمليات اللصق في حقول الإجابة.' : '* Incremented per raw clipboard paste action recorded.'}
                 </span>
               </div>
 
               {/* Slider for Copy */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'عملية النسخ (Copy Event):' : 'Copy Event Penalty:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">
@@ -1602,17 +1600,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.copy}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, copy: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-amber-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-amber-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-555 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-555'} block leading-tight`}>
                   {lang === 'ar' ? '* تسند لنسخ الطالب لنصوص الأسئلة لتلقين chatgpt.' : '* Incremented when candidate copies exam question text to clipboard.'}
                 </span>
               </div>
 
               {/* Slider for Focus-Out duration */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'خروج الفوكس الطويل (Focus Out Prolonged):' : 'Prolonged Window Defocus Penalty:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">
@@ -1624,9 +1622,9 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.focusOut}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, focusOut: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-purple-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-purple-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-555 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-555'} block leading-tight`}>
                   {lang === 'ar' ? '* تُطبق إذا مكث الطالب خارج النافذة وقتاً ممتداً.' : '* Applies when candidate dwells away from the exam focus zone for > 30s.'}
                 </span>
               </div>
@@ -1639,9 +1637,9 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
               </h4>
 
               {/* Slider for IP conflict */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'تطابق عنوان IP لمرشحين (IP Address Collision):' : 'IP Address Conflict Penalty:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded">
@@ -1653,17 +1651,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.ipConflict}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, ipConflict: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-red-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-red-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-555 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-555'} block leading-tight`}>
                   {lang === 'ar' ? '* تطابق عنوان شبكة الطالب مع طالب آخر في نفس القاعة.' : '* Triggered if 2 candidates submit under identical network nodes.'}
                 </span>
               </div>
 
               {/* Slider for AI Detection matches */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'مخرجات الكشف الدلالي للذكاء الاصطناعي (AI Similarity Detect):' : 'AI Plagiarism Semantic Match Penalty:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">
@@ -1675,17 +1673,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.aiGenerated}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, aiGenerated: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-emerald-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-emerald-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-555 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-555'} block leading-tight`}>
                   {lang === 'ar' ? '* تُسند تلقائياً إذا أثبت فحص تشابه الذكاء نسبة عالية لسرقات النصوص.' : '* Assorated when the similarity engine flags verified duplicate solutions.'}
                 </span>
               </div>
 
               {/* Slider for Rapid Completion */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'الحل فائق السرعة العشوائي (Rapid Solve completion):' : 'Speedy Completion Anomaly Penalty:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded">
@@ -1697,17 +1695,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.rapidCompletion}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, rapidCompletion: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-orange-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-orange-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-555 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-555'} block leading-tight`}>
                   {lang === 'ar' ? '* تُطبق إذا أنهى الطالب الإجابات في ثوانٍ معدودة مقارنة بتقدير المدرس.' : '* Triggers immediately if actual solve duration is < 20% of expectation.'}
                 </span>
               </div>
 
               {/* Slider for Macro usage */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850/50 space-y-3">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850/50'} p-4 rounded-xl border space-y-3`}>
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-350">
+                  <label className={`text-xs font-bold ${isLightMode ? 'text-slate-600' : 'text-slate-350'}`}>
                     {lang === 'ar' ? 'نمط نقرات الماكرو الخارجية (Macro usage):' : 'Simulated Keyboard Macro Injection:'}
                   </label>
                   <span className="text-xs font-mono font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded">
@@ -1719,17 +1717,17 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
                   value={anomalyWeights.macroUsage}
                   disabled={!isAdmin}
                   onChange={(e) => setAnomalyWeights(prev => ({ ...prev, macroUsage: Number(e.target.value) }))}
-                  className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-pink-500 disabled:opacity-50"
+                  className={`w-full h-1.5 ${isLightMode ? 'bg-slate-200' : 'bg-slate-900'} rounded-lg appearance-none cursor-pointer accent-pink-500 disabled:opacity-50`}
                 />
-                <span className="text-[10px] text-slate-555 block leading-tight">
+                <span className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-555'} block leading-tight`}>
                   {lang === 'ar' ? '* رصد استخدام قنوات الكتابة الصورية التلقائية بالامتحان.' : '* Flagged if answer delta keystroke speed suggests artificial injections.'}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 flex justify-between items-center border-t border-slate-850">
-            <span className="text-[11px] text-slate-400 max-w-md">
+          <div className={`pt-4 flex justify-between items-center border-t ${isLightMode ? 'border-slate-200' : 'border-slate-850'}`}>
+            <span className={`text-[11px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} max-w-md`}>
               {lang === 'ar' 
                 ? 'مجموع الأوزان الكلية الحالية يمثل عتبة استدعاء المراقبة الفورية. لحساب النقاط، يتكامل النظام ديناميكياً مع الأوزان لتوزيع نسب كشف الحالات.'
                 : 'Current penalty weights are dynamically consumed by the telemetry resolver server on each candidate event delta.'
@@ -1759,15 +1757,15 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
       )}
 
       {/* Dynamic Sandbox Trial Simulation Area - Available in both views */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 shadow-xl">
-        <div className="border-b border-slate-800 pb-3">
+      <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 space-y-4 shadow-xl`}>
+        <div className={`border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} pb-3`}>
           <h3 className="text-xs font-black uppercase text-amber-500 tracking-wider flex items-center gap-1.5">
             <Terminal className="w-4 h-4" />
             <span>
               {lang === 'ar' ? 'منصة مراجعة حزم البيانات ومحاكاة المقارنة (Dynamic Proctoring Sandbox)' : 'Active packing & comparison testbed'}
             </span>
           </h3>
-          <p className="text-[10px] text-slate-400 mt-1 leading-normal">
+          <p className={`text-[10px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} mt-1 leading-normal`}>
             {lang === 'ar'
               ? 'اختر اختباراً نشطاً لمحاكاة فرز وتعبئة بيانات الطلاب استناداً إلى استراتيجية التغليف المعتمدة بالأعلى، ومشاهدة سجل البيانات المصدرة الفوري.'
               : 'Choose any active lecture examination session to compile packing matrices and view the raw payload buffers exported to the intelligence engines.'
@@ -1777,11 +1775,11 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
         <div className="flex flex-col md:flex-row gap-4 items-end">
           <div className="space-y-1 text-xs font-sans w-full md:w-80">
-            <label className="text-slate-400 font-bold block">{lang === 'ar' ? 'اختر جلسة الاختبار المراد فحصها' : 'Select Exam Session for Audit'}</label>
+            <label className={`${isLightMode ? 'text-slate-500' : 'text-slate-400'} font-bold block`}>{lang === 'ar' ? 'اختر جلسة الاختبار المراد فحصها' : 'Select Exam Session for Audit'}</label>
             <select
               value={selectedSandboxExamId}
               onChange={(e) => setSelectedSandboxExamId(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-slate-200 rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10"
+              className={`w-full ${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-slate-950 border-slate-800 text-slate-200'} rounded-lg py-2 px-3 outline-none focus:border-blue-500 cursor-pointer h-10`}
             >
               <option value="">-- {lang === 'ar' ? 'اختر اختباراً نشطاً' : 'Select Exam Session'} --</option>
               {exams.map(ex => (
@@ -1806,14 +1804,14 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 mt-4">
             {/* Terminal Packing log */}
             <div className="xl:col-span-4 space-y-2">
-              <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 flex items-center gap-1 font-bold">
+              <span className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} flex items-center gap-1 font-bold`}>
                 <Terminal className="w-3.5" />
                 <span>{lang === 'ar' ? 'سجل فرز وحزم البيانات للموديل:' : 'Forensic Data Packing Logs:'}</span>
               </span>
               
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850 h-72 overflow-y-auto font-mono text-[10px] text-emerald-400 space-y-1.5 leading-normal select-text">
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850'} p-4 rounded-xl border h-72 overflow-y-auto font-mono text-[10px] text-emerald-400 space-y-1.5 leading-normal select-text`}>
                 {analysisOutput.packingLog.map((log, idx) => (
-                  <div key={idx} className="border-b border-slate-900/40 pb-1 last:border-0">
+                  <div key={idx} className={`border-b ${isLightMode ? 'border-slate-200' : 'border-slate-900/40'} pb-1 last:border-0`}>
                     {log}
                   </div>
                 ))}
@@ -1822,26 +1820,26 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
             {/* Exported Raw Buffer Preview */}
             <div className="xl:col-span-4 space-y-2">
-              <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 flex items-center gap-1 font-bold">
+              <span className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} flex items-center gap-1 font-bold`}>
                 <Code className="w-3.5" />
                 <span>{lang === 'ar' ? 'معاينة ترويسة البيانات المصدرة (JSON Payload):' : 'Output Payload JSON Buffer Preview:'}</span>
               </span>
               
-              <pre className="bg-slate-950 p-4 rounded-xl border border-slate-850 h-72 overflow-auto font-mono text-[9px] text-blue-300 leading-normal select-text">
+              <pre className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-850'} p-4 rounded-xl border h-72 overflow-auto font-mono text-[9px] text-blue-300 leading-normal select-text`}>
                 {analysisOutput.packedPayloadPreview}
               </pre>
             </div>
 
             {/* AI Response Output */}
             <div className="xl:col-span-4 space-y-2">
-              <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 flex items-center gap-1 font-bold">
+              <span className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} flex items-center gap-1 font-bold`}>
                 <Cpu className="w-3.5" />
                 <span>{lang === 'ar' ? 'إفادة الموديل ومخرجات القرار:' : 'Intelligence Response & Insights:'}</span>
               </span>
               
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-850 h-72 overflow-y-auto font-sans text-xs text-slate-300 whitespace-pre-wrap leading-relaxed select-text">
-                <div className="mb-2.5 pb-2 border-b border-slate-900 flex justify-between items-center text-[10px] font-mono">
-                  <span className="text-[10.5px] uppercase font-bold text-slate-450">{lang === 'ar' ? 'نموذج الكشف النشط:' : 'Active detector:'}</span>
+              <div className={`${isLightMode ? 'bg-slate-50 border-slate-200 text-slate-600' : 'bg-slate-950 border-slate-850 text-slate-300'} p-4 rounded-xl border h-72 overflow-y-auto font-sans text-xs whitespace-pre-wrap leading-relaxed select-text`}>
+                <div className={`mb-2.5 pb-2 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-900'} flex justify-between items-center text-[10px] font-mono`}>
+                  <span className={`text-[10.5px] uppercase font-bold ${isLightMode ? 'text-slate-500' : 'text-slate-450'}`}>{lang === 'ar' ? 'نموذج الكشف النشط:' : 'Active detector:'}</span>
                   <span className={`px-2 py-0.5 rounded border ${analysisOutput.invokedWithRealApi ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/15' : 'bg-amber-500/10 text-amber-400 border-amber-500/15'}`}>
                     {analysisOutput.invokedWithRealApi ? (lang === 'ar' ? 'سحابي حي' : 'LIVE API') : (lang === 'ar' ? 'محاكاة موضعية' : 'LOCAL SIMULATOR')}
                   </span>
@@ -1852,27 +1850,27 @@ export default function EngineControlPanel({ lang, exams, showToast, handleReloa
 
             {/* Collusion Results summary card list */}
             <div className="xl:col-span-12 space-y-2 pt-2">
-              <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400 flex items-center gap-1 font-bold">
+              <span className={`text-[10px] uppercase font-mono tracking-wider ${isLightMode ? 'text-slate-500' : 'text-slate-400'} flex items-center gap-1 font-bold`}>
                 <CheckCircle2 className="w-3.5" />
                 <span>{lang === 'ar' ? 'تشخيصات التطابق المشتبه بها المرصودة المسببة للغش:' : 'Detected Structural Collusion and Similarity Indicators:'}</span>
               </span>
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                 {analysisOutput.results.map((resItem, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2.5">
+                  <div key={idx} className={`${isLightMode ? 'bg-slate-50 border-slate-200' : 'bg-slate-950 border-slate-800'} rounded-xl p-4 space-y-2.5`}>
                     <div className="flex justify-between items-start">
-                      <span className="text-xs font-black text-slate-200 block">{resItem.itemLabel}</span>
+                      <span className={`text-xs font-black ${isLightMode ? 'text-slate-700' : 'text-slate-200'} block`}>{resItem.itemLabel}</span>
                       <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-black ${resItem.similarityScore >= 75 ? 'bg-red-500/10 text-red-400 border border-red-500/15 animate-pulse' : resItem.similarityScore >= 35 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/15' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/15'}`}>
                         {lang === 'ar' ? 'التطابق:' : 'Similarity:'} {resItem.similarityScore}%
                       </span>
                     </div>
 
-                    <div className="text-[10.5px] text-slate-400 space-y-1">
+                    <div className={`text-[10.5px] ${isLightMode ? 'text-slate-500' : 'text-slate-400'} space-y-1`}>
                       <div className="flex gap-1.5 items-center">
-                        <span className="font-bold text-slate-500">{lang === 'ar' ? 'الكيانات المشتبه بها:' : 'Entities under review:'}</span>
+                        <span className={`font-bold ${isLightMode ? 'text-slate-400' : 'text-slate-500'}`}>{lang === 'ar' ? 'الكيانات المشتبه بها:' : 'Entities under review:'}</span>
                         <span className="text-blue-300 font-bold">{resItem.suspectedEntities.join(lang === 'ar' ? ' و ' : ', ')}</span>
                       </div>
-                      <p className="leading-relaxed bg-slate-900/50 p-2 rounded border border-slate-850 mt-1 text-slate-350">
+                      <p className={`leading-relaxed ${isLightMode ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-slate-900/50 border-slate-850 text-slate-350'} p-2 rounded border mt-1`}>
                         {lang === 'ar' ? resItem.reasonAr : resItem.reasonEn}
                       </p>
                     </div>

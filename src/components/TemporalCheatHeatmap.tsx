@@ -27,6 +27,7 @@ export default function TemporalCheatHeatmap({
       totalTabSwitches: number;
       totalClipboardOps: number;
       totalMouseOutSecs: number;
+      densityScore: number;
       contributors: Array<{ studentId: string; studentName: string; riskScore: number; incidents: number }>;
     };
   } | null>(null);
@@ -69,8 +70,6 @@ export default function TemporalCheatHeatmap({
         matchingSubmissions.forEach(sub => {
           // Calculate specific incidents falling within this specific 5-min interval
           let intervalTabSwitches = 0;
-          let intervalClipboardOps = 0;
-          let intervalMouseOutSecs = 0;
 
           // 1. Tab switches within timescale
           if (sub.tabSwitchesTimeline && sub.tabSwitchesTimeline.length > 0) {
@@ -92,12 +91,12 @@ export default function TemporalCheatHeatmap({
           // 2. Clipboard activity (Copy/Paste) deterministic distribution across timeline
           const clipboardHash = sub.studentId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
           const clipSeed = Math.cos((col.start + 3) + clipboardHash) * 0.5 + 0.5;
-          intervalClipboardOps = Math.round((sub.copyCount + sub.pasteCount) * clipSeed * 0.4);
+          const intervalClipboardOps = Math.round((sub.copyCount + sub.pasteCount) * clipSeed * 0.4);
 
           // 3. Mouse out seconds distribution
           const mouseOutHash = sub.studentId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
           const mouseSeed = Math.sin((col.start + 12) + mouseOutHash) * 0.5 + 0.5;
-          intervalMouseOutSecs = Math.round(sub.mouseOutSeconds * mouseSeed * 0.35);
+          const intervalMouseOutSecs = Math.round(sub.mouseOutSeconds * mouseSeed * 0.35);
 
           // Sum up total activity for this timeline cell
           const incidentWeight = (intervalTabSwitches * 3) + (intervalClipboardOps * 2) + Math.min(10, Math.floor(intervalMouseOutSecs / 5));
@@ -341,6 +340,7 @@ export default function TemporalCheatHeatmap({
             totalTabSwitches: d.totalTabSwitches,
             totalClipboardOps: d.totalClipboardOps,
             totalMouseOutSecs: d.totalMouseOutSecs,
+            densityScore: d.densityScore,
             contributors: d.contributors
           }
         });

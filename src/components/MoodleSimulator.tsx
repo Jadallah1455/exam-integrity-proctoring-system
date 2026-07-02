@@ -3,14 +3,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, FormEvent, useEffect } from 'react';
-import { Send, Sliders, ShieldCheck, ShieldAlert, BookOpen, AlertCircle, RefreshCw } from 'lucide-react';
+import { useState, FormEvent } from 'react';
+import { Send, Sliders, RefreshCw } from 'lucide-react';
 import { TelemetryPayload, ExamDifficulty } from '../types';
 import { translations } from '../translations';
+import SimulatorPresetCards from './SimulatorPresetCards';
+import FeedbackBanner from './FeedbackBanner';
 
 interface MoodleSimulatorProps {
   onTelemetrySubmitted: () => void;
   lang?: 'ar' | 'en';
+  isLightMode?: boolean;
   activeExamId?: string;
   activeExamName?: string;
   activeExamDifficulty?: ExamDifficulty;
@@ -19,6 +22,7 @@ interface MoodleSimulatorProps {
 export default function MoodleSimulator({ 
   onTelemetrySubmitted, 
   lang = 'ar',
+  isLightMode = false,
   activeExamId,
   activeExamName,
   activeExamDifficulty
@@ -29,9 +33,13 @@ export default function MoodleSimulator({
 
   // Custom Form states
   const [studentId, setStudentId] = useState('STD-2023-9912');
-  const [studentName, setStudentName] = useState('أحمد المالكي');
+  const [studentName, setStudentName] = useState(
+    lang === 'en' ? 'Ahmed Al-Malki' : 'أحمد المالكي'
+  );
   const [examId, setExamId] = useState(activeExamId || 'EXM-SEC-401');
-  const [examName, setExamName] = useState(activeExamName || 'إختبار هندسة الأمن السيبراني النهائي');
+  const [examName, setExamName] = useState(
+    activeExamName || (lang === 'en' ? 'Cybersecurity Engineering Final Exam' : 'إختبار هندسة الأمن السيبراني النهائي')
+  );
   const [difficulty, setDifficulty] = useState<ExamDifficulty>(activeExamDifficulty || 'hard');
   const [timeLimit, setTimeLimit] = useState(60);
   const [duration, setDuration] = useState(15);
@@ -43,38 +51,6 @@ export default function MoodleSimulator({
   const [outOfBounds, setOutOfBounds] = useState(14);
   const [ipAddress, setIpAddress] = useState('192.168.1.150'); // Default to clashing IP for testing
   const [signPayload, setSignPayload] = useState(true);
-
-  // Synchronize dynamic default values when selected language shifts
-  useEffect(() => {
-    if (!activeExamName) {
-      if (lang === 'en') {
-        setStudentName('Ahmed Al-Malki');
-        setExamName('Cybersecurity Engineering Final Exam');
-      } else {
-        setStudentName('أحمد المالكي');
-        setExamName('إختبار هندسة الأمن السيبراني النهائي');
-      }
-    } else {
-      if (lang === 'en') {
-        setStudentName('Ahmed Al-Malki');
-      } else {
-        setStudentName('أحمد المالكي');
-      }
-    }
-  }, [lang, activeExamName]);
-
-  // Synchronize dynamic exam context changes
-  useEffect(() => {
-    if (activeExamId) setExamId(activeExamId);
-  }, [activeExamId]);
-
-  useEffect(() => {
-    if (activeExamName) setExamName(activeExamName);
-  }, [activeExamName]);
-
-  useEffect(() => {
-    if (activeExamDifficulty) setDifficulty(activeExamDifficulty);
-  }, [activeExamDifficulty]);
 
   // Send payload handler
   const sendTelemetryPayload = async (payload: Partial<TelemetryPayload>) => {
@@ -274,16 +250,16 @@ export default function MoodleSimulator({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-inner">
-      <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+    <div className={`${isLightMode ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-800'} rounded-xl p-5 shadow-inner`}>
+      <div className={`flex items-center justify-between mb-4 border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} pb-3`}>
         <div className="flex items-center gap-2 font-sans">
           <Sliders className="w-5 h-5 text-blue-400" />
-          <h2 className="text-sm font-extrabold text-slate-100">{translations[lang].moodleSimTitle}</h2>
+          <h2 className={`text-sm font-extrabold ${isLightMode ? 'text-slate-800' : 'text-slate-100'}`}>{translations[lang].moodleSimTitle}</h2>
         </div>
         <button
           onClick={handleResetData}
           disabled={loading}
-          className="text-[10px] flex items-center gap-1 bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded transition font-sans cursor-pointer"
+          className={`${isLightMode ? 'text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700' : 'text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-300'} flex items-center gap-1 px-2 py-1 rounded transition font-sans cursor-pointer`}
           title={translations[lang].moodleSimResetTooltip}
         >
           <RefreshCw className="w-3" />
@@ -291,21 +267,21 @@ export default function MoodleSimulator({
         </button>
       </div>
 
-      <div className="text-xs text-slate-400 mb-4 leading-relaxed font-sans">
+      <div className={`text-xs ${isLightMode ? 'text-slate-500' : 'text-slate-400'} mb-4 leading-relaxed font-sans`}>
         {translations[lang].moodleSimDesc}
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-800 mb-4 p-0.5 bg-slate-950 rounded-lg">
+      <div className={`flex border-b ${isLightMode ? 'border-slate-200' : 'border-slate-800'} mb-4 p-0.5 ${isLightMode ? 'bg-slate-100' : 'bg-slate-950'} rounded-lg`}>
         <button
           onClick={() => { setActiveTab('presets'); setFeedback(null); }}
-          className={`flex-1 py-1.5 text-xs text-center rounded-md font-medium transition cursor-pointer font-sans ${activeTab === 'presets' ? 'bg-blue-600/20 text-blue-300 border border-blue-500/30' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex-1 py-1.5 text-xs text-center rounded-md font-medium transition cursor-pointer font-sans ${activeTab === 'presets' ? `${isLightMode ? 'bg-blue-100 text-blue-700 border border-blue-300' : 'bg-blue-600/20 text-blue-300 border border-blue-500/30'}` : `${isLightMode ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-slate-200'}`}`}
         >
           {translations[lang].moodleSimPresetTab}
         </button>
         <button
           onClick={() => { setActiveTab('custom'); setFeedback(null); }}
-          className={`flex-1 py-1.5 text-xs text-center rounded-md font-medium transition cursor-pointer font-sans ${activeTab === 'custom' ? 'bg-blue-600/20 text-blue-300 border border-blue-500/30' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex-1 py-1.5 text-xs text-center rounded-md font-medium transition cursor-pointer font-sans ${activeTab === 'custom' ? `${isLightMode ? 'bg-blue-100 text-blue-700 border border-blue-300' : 'bg-blue-600/20 text-blue-300 border border-blue-500/30'}` : `${isLightMode ? 'text-slate-500 hover:text-slate-700' : 'text-slate-400 hover:text-slate-200'}`}`}
         >
           {translations[lang].moodleSimCustomTab}
         </button>
@@ -313,87 +289,7 @@ export default function MoodleSimulator({
 
       {/* Preset View */}
       {activeTab === 'presets' && (
-        <div className="space-y-3">
-          {/* Scenario 1: Interlocking IP */}
-          <div className="border border-red-900/30 bg-red-950/10 rounded-lg p-3 hover:bg-red-950/20 transition group">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-xs font-bold text-red-400">{translations[lang].moodlePresetATitle}</h3>
-                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-                  {translations[lang].moodlePresetADesc}
-                </p>
-              </div>
-              <button
-                disabled={loading}
-                onClick={() => triggerPreset('collusion_1')}
-                className="bg-red-900/40 hover:bg-red-800/60 p-1.5 rounded-md text-[11px] text-red-200 flex items-center gap-1 transition-all self-center shrink-0"
-              >
-                <Send className="w-3 h-3" />
-                {translations[lang].moodlePresetInjectBtn}
-              </button>
-            </div>
-          </div>
-
-          {/* Scenario 2: Leakage & Copy paste */}
-          <div className="border border-orange-950/55 bg-orange-950/10 rounded-lg p-3 hover:bg-orange-950/20 transition group">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-xs font-bold text-orange-400">{translations[lang].moodlePresetBTitle}</h3>
-                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-                  {translations[lang].moodlePresetBDesc}
-                </p>
-              </div>
-              <button
-                disabled={loading}
-                onClick={() => triggerPreset('leak')}
-                className="bg-orange-900/40 hover:bg-orange-800/60 p-1.5 rounded-md text-[11px] text-orange-200 flex items-center gap-1 transition-all self-center shrink-0"
-              >
-                <Send className="w-3 h-3" />
-                {translations[lang].moodlePresetInjectBtn}
-              </button>
-            </div>
-          </div>
-
-          {/* Scenario 3: Corrupt signature */}
-          <div className="border border-yellow-900/30 bg-yellow-950/10 rounded-lg p-3 hover:bg-yellow-950/20 transition group">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-xs font-bold text-yellow-400">{translations[lang].moodlePresetCTitle}</h3>
-                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-                  {translations[lang].moodlePresetCDesc}
-                </p>
-              </div>
-              <button
-                disabled={loading}
-                onClick={() => triggerPreset('tampered_signature')}
-                className="bg-yellow-900/40 hover:bg-yellow-800/60 p-1.5 rounded-md text-[11px] text-yellow-200 flex items-center gap-1 transition-all self-center shrink-0"
-              >
-                <Send className="w-3 h-3" />
-                {translations[lang].moodlePresetInjectBtn}
-              </button>
-            </div>
-          </div>
-
-          {/* Scenario 4: Normal honest student */}
-          <div className="border border-green-900/30 bg-green-950/10 rounded-lg p-3 hover:bg-green-950/20 transition group">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-xs font-bold text-green-400">{translations[lang].moodlePresetDTitle}</h3>
-                <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
-                  {translations[lang].moodlePresetDDesc}
-                </p>
-              </div>
-              <button
-                disabled={loading}
-                onClick={() => triggerPreset('normal')}
-                className="bg-green-900/40 hover:bg-green-800/60 p-1.5 rounded-md text-[11px] text-green-200 flex items-center gap-1 transition-all self-center shrink-0"
-              >
-                <Send className="w-3 h-3" />
-                {translations[lang].moodlePresetInjectBtn}
-              </button>
-            </div>
-          </div>
-        </div>
+        <SimulatorPresetCards lang={lang} isLightMode={isLightMode} loading={loading} onInject={triggerPreset} />
       )}
 
       {/* Custom Form View */}
@@ -401,34 +297,34 @@ export default function MoodleSimulator({
         <form onSubmit={submitCustomForm} className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1 font-medium">{translations[lang].moodleFormStudentName}</label>
+              <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1 font-medium`}>{translations[lang].moodleFormStudentName}</label>
               <input
                 type="text"
                 required
                 value={studentName}
                 onChange={e => setStudentName(e.target.value)}
-                className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg focus:outline-none focus:border-indigo-500"
+                className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg focus:outline-none focus:border-indigo-500`}
               />
             </div>
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1 font-medium">{translations[lang].moodleFormStudentId}</label>
+              <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1 font-medium`}>{translations[lang].moodleFormStudentId}</label>
               <input
                 type="text"
                 required
                 value={studentId}
                 onChange={e => setStudentId(e.target.value)}
-                className="w-full bg-[#0d101d] text-xs font-mono text-white border border-gray-800 p-2 rounded-lg focus:outline-none focus:border-indigo-500"
+                className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs font-mono p-2 rounded-lg focus:outline-none focus:border-indigo-500`}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1 font-medium">{translations[lang].moodleFormDifficulty}</label>
+              <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1 font-medium`}>{translations[lang].moodleFormDifficulty}</label>
               <select
                 value={difficulty}
                 onChange={e => setDifficulty(e.target.value as ExamDifficulty)}
-                className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg focus:outline-none focus:border-indigo-500"
+                className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg focus:outline-none focus:border-indigo-500`}
               >
                 <option value="easy">{translations[lang].difficultyEasy} (Easy)</option>
                 <option value="medium">{translations[lang].difficultyMedium} (Medium)</option>
@@ -436,42 +332,42 @@ export default function MoodleSimulator({
               </select>
             </div>
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1 font-medium">{translations[lang].moodleFormIp}</label>
+              <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1 font-medium`}>{translations[lang].moodleFormIp}</label>
               <input
                 type="text"
                 required
                 value={ipAddress}
                 onChange={e => setIpAddress(e.target.value)}
-                className="w-full bg-[#0d101d] text-xs font-mono text-white border border-gray-800 p-2 rounded-lg focus:outline-none focus:border-indigo-500"
+                className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs font-mono p-2 rounded-lg focus:outline-none focus:border-indigo-500`}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1 font-medium">{translations[lang].moodleFormTimeLimit}</label>
+              <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1 font-medium`}>{translations[lang].moodleFormTimeLimit}</label>
               <input
                 type="number"
                 min="1"
                 required
                 value={timeLimit}
                 onChange={e => setTimeLimit(Number(e.target.value))}
-                className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono"
+                className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono`}
               />
             </div>
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1 font-medium">{translations[lang].moodleFormDuration}</label>
+              <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1 font-medium`}>{translations[lang].moodleFormDuration}</label>
               <input
                 type="number"
                 min="1"
                 required
                 value={duration}
                 onChange={e => setDuration(Number(e.target.value))}
-                className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono"
+                className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono`}
               />
             </div>
             <div>
-              <label className="block text-[10px] text-gray-400 mb-1 font-medium">{translations[lang].moodleFormScore}</label>
+              <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1 font-medium`}>{translations[lang].moodleFormScore}</label>
               <input
                 type="number"
                 min="0"
@@ -479,69 +375,69 @@ export default function MoodleSimulator({
                 required
                 value={score}
                 onChange={e => setScore(Number(e.target.value))}
-                className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono"
+                className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono`}
               />
             </div>
           </div>
 
-          <div className="border-t border-gray-800/60 my-2 pt-2">
-            <h4 className="text-[10px] font-bold text-gray-400 mb-2">{translations[lang].moodleFormTelemetryHeader}</h4>
+          <div className={`border-t ${isLightMode ? 'border-slate-200' : 'border-gray-800/60'} my-2 pt-2`}>
+            <h4 className={`text-[10px] font-bold ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-2`}>{translations[lang].moodleFormTelemetryHeader}</h4>
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">{translations[lang].moodleFormCopy}</label>
+                <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1`}>{translations[lang].moodleFormCopy}</label>
                 <input
                   type="number"
                   value={copyCount}
                   onChange={e => setCopyCount(Number(e.target.value))}
-                  className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg font-mono"
+                  className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg font-mono`}
                 />
               </div>
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">{translations[lang].moodleFormPaste}</label>
+                <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1`}>{translations[lang].moodleFormPaste}</label>
                 <input
                   type="number"
                   value={pasteCount}
                   onChange={e => setPasteCount(Number(e.target.value))}
-                  className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg font-mono"
+                  className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg font-mono`}
                 />
               </div>
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">{translations[lang].moodleFormTabSwitch}</label>
+                <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1`}>{translations[lang].moodleFormTabSwitch}</label>
                 <input
                   type="number"
                   value={tabSwitches}
                   onChange={e => setTabSwitches(Number(e.target.value))}
-                  className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg font-mono"
+                  className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg font-mono`}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 mt-2">
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">{translations[lang].moodleFormMouseOut}</label>
+                <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1`}>{translations[lang].moodleFormMouseOut}</label>
                 <input
                   type="number"
                   value={mouseOut}
                   onChange={e => setMouseOut(Number(e.target.value))}
-                  className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg font-mono"
+                  className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg font-mono`}
                 />
               </div>
               <div>
-                <label className="block text-[10px] text-gray-400 mb-1">{translations[lang].moodleFormOutOfBounds}</label>
+                <label className={`block text-[10px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} mb-1`}>{translations[lang].moodleFormOutOfBounds}</label>
                 <input
                   type="number"
                   value={outOfBounds}
                   onChange={e => setOutOfBounds(Number(e.target.value))}
-                  className="w-full bg-[#0d101d] text-xs text-white border border-gray-800 p-2 rounded-lg font-mono"
+                  className={`w-full ${isLightMode ? 'bg-white border-slate-300 text-slate-800' : 'bg-[#0d101d] border-gray-800 text-white'} text-xs p-2 rounded-lg font-mono`}
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between bg-gray-900/60 p-2 rounded-lg mt-3">
+          <div className={`flex items-center justify-between ${isLightMode ? 'bg-slate-50' : 'bg-gray-900/60'} p-2 rounded-lg mt-3`}>
             <div className="flex flex-col">
-              <span className="text-[10px] text-gray-300 font-bold">{translations[lang].moodleFormCheckTitle}</span>
-              <span className="text-[9px] text-gray-400 leading-normal">{translations[lang].moodleFormCheckDesc}</span>
+              <span className={`text-[10px] ${isLightMode ? 'text-slate-700' : 'text-gray-300'} font-bold`}>{translations[lang].moodleFormCheckTitle}</span>
+              <span className={`text-[9px] ${isLightMode ? 'text-slate-500' : 'text-gray-400'} leading-normal`}>{translations[lang].moodleFormCheckDesc}</span>
             </div>
             <input
               type="checkbox"
@@ -554,7 +450,7 @@ export default function MoodleSimulator({
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 bg-indigo-600 hover:bg-indigo-500 font-bold text-xs text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer disabled:bg-indigo-850"
+            className={`w-full mt-2 bg-indigo-600 hover:bg-indigo-500 font-bold text-xs ${isLightMode ? 'text-slate-800' : 'text-white'} py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer disabled:bg-indigo-850`}
           >
             <Send className="w-3.5 h-3.5" />
             {loading ? translations[lang].moodleFormSubmitLoading : translations[lang].moodleFormSubmitBtn}
@@ -562,20 +458,7 @@ export default function MoodleSimulator({
         </form>
       )}
 
-      {/* Verification Feedback Banner */}
-      {feedback && (
-        <div className={`mt-4 p-3 rounded-lg text-xs leading-relaxed flex items-start gap-2 border ${feedback.success ? 'bg-emerald-950/20 text-emerald-300 border-emerald-900/40' : 'bg-rose-950/20 text-rose-300 border-rose-900/40'}`}>
-          {feedback.success ? (
-            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-          ) : (
-            <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
-          )}
-          <div>
-            <h4 className="font-bold mb-1">{feedback.success ? translations[lang].moodleFeedbackSuccessTitle : translations[lang].moodleFeedbackErrorTitle}</h4>
-            <p className="text-[11px] text-gray-300">{feedback.message}</p>
-          </div>
-        </div>
-      )}
+      <FeedbackBanner feedback={feedback} lang={lang} isLightMode={isLightMode} />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import { TelemetryPayload, AnomalyReport } from '../types';
-import { Clock, ShieldAlert, Award, Sparkles, Filter, Info, Download, BarChart2 } from 'lucide-react';
+import { Clock, ShieldAlert, Sparkles } from 'lucide-react';
 
 interface SessionIntegrityDashboardProps {
   submissions: TelemetryPayload[];
@@ -19,7 +19,7 @@ interface TimelinePoint {
 
 export default function SessionIntegrityDashboard({
   submissions,
-  analyses,
+  analyses: _analyses,
   lang,
   activeExamId
 }: SessionIntegrityDashboardProps) {
@@ -94,11 +94,8 @@ export default function SessionIntegrityDashboard({
       });
 
       const activeCount = filteredSubmissions.length || 1;
-      const pctOfCandidates = Math.round((activeStudsWithSwitch / activeCount) * 100);
 
       // Let's amplify/add flavor to specific moments (like intermediate exam breaks or specific minutes)
-      // to flag suspicious "synchronized" cheating trends
-      let label = "";
       if (minute === 25 && filteredSubmissions.length > 1) {
         // 25th minute synchronicity
         totalSwitches = Math.max(totalSwitches, Math.round(activeCount * 2.8));

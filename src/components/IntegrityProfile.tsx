@@ -19,7 +19,7 @@ export default function IntegrityProfile({
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasPhoto, setHasPhoto] = useState<boolean>(false);
-  const [errorStatus, setErrorStatus] = useState<boolean>(false);
+  const [_errorStatus, setErrorStatus] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [popupPos, setPopupPos] = useState<{ top: number; left: number } | null>(null);
   const avatarRef = useRef<HTMLDivElement>(null);

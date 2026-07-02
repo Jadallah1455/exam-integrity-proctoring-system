@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { 
-  Users, 
-  Map, 
   Monitor, 
-  HelpCircle,
-  TrendingUp, 
-  Network, 
-  Activity, 
   ShieldAlert,
   Flame,
   LayoutGrid
@@ -31,7 +25,7 @@ export default function RiskHeatmap({
   riskThreshold
 }: RiskHeatmapProps) {
   const [layoutMode, setLayoutMode] = useState<'seating' | 'density'>('seating');
-  const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
+  const [_selectedSeat, setSelectedSeat] = useState<string | null>(null);
 
   // Seating grid dimensions
   const rows = ['A', 'B', 'C', 'D'];

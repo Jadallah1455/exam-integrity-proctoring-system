@@ -112,6 +112,30 @@ app.use((req, res, next) => {
   next();
 });
 
+// Rate limiting for telemetry endpoints
+const requestCounts = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 100; // requests
+const RATE_WINDOW_MS = 60000; // 1 minute
+
+function telemetryRateLimit(req: any, res: any, next: any) {
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const now = Date.now();
+  const entry = requestCounts.get(ip);
+  if (!entry || now > entry.resetAt) {
+    requestCounts.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return next();
+  }
+  if (entry.count >= RATE_LIMIT) {
+    return res.status(429).json({
+      success: false,
+      error: "تم تجاوز حد الطلبات المسموح به. يرجى الانتظار.",
+      errorEn: "Rate limit exceeded. Please wait before sending more requests."
+    });
+  }
+  entry.count++;
+  next();
+}
+
 // Initialize Gemini API
 let ai: GoogleGenAI | null = null;
 if (process.env.GEMINI_API_KEY) {
@@ -953,7 +977,11 @@ function saveDatabase() {
       copyPasteConfig,
       anomalyWeights
     };
-    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(dataToSave, null, 2), "utf8");
+    const serialized = JSON.stringify(dataToSave, null, 2);
+    // Atomic write: write to temp file then rename to prevent corruption
+    const tmpPath = DB_FILE_PATH + ".tmp";
+    fs.writeFileSync(tmpPath, serialized, "utf8");
+    fs.renameSync(tmpPath, DB_FILE_PATH);
     console.log(`[Database] Saved successfully. Submissions: ${studentSubmissions.length}, Events: ${savedEvents.length}`);
   } catch (err: any) {
     console.error(`[Database Error] Failed to save database:`, err);
@@ -1166,7 +1194,7 @@ function aggregateSessionEvents(sessionId: string, baseInfo: { studentId: string
         const qNum = Number(qData.question_number || 1);
         const qId = qData.question_dom_id || `question-${qNum}`;
         
-        let existingQ = questionMap.get(qId);
+        const existingQ = questionMap.get(qId);
         if (existingQ) {
           if (type === "answer_changed") {
             existingQ.changesCount += 1;
@@ -1223,7 +1251,7 @@ function evaluateCustomFormula(
 ): boolean {
   try {
     // Replace variables with literal values
-    let expr = formula
+    const expr = formula
       .replace(/\btabSwitchesCount\b/g, String(payload.tabSwitchesCount || 0))
       .replace(/\bcopyCount\b/g, String(payload.copyCount || 0))
       .replace(/\bpasteCount\b/g, String(payload.pasteCount || 0))
@@ -1306,7 +1334,7 @@ function calculateAnalysis(payload: TelemetryPayload, allSubmissions: TelemetryP
       const plagiarismRatio = chatGPTPatternQuestions / totalQuestions;
       const triggerFullPlagiarismPenalty = plagiarismRatio >= copyPasteConfig.abusedMultiplier && chatGPTPatternQuestions > 0;
       
-      let plagiarismRiskPoints = 0;
+      let plagiarismRiskPoints;
       const maxPoints = rule.baseWeight;
       
       if (triggerFullPlagiarismPenalty) {
@@ -1633,9 +1661,9 @@ app.post("/api/ai-config/analyze", authMiddleware, async (req, res) => {
   }
 
   const strategy = aiPlagiarismConfig.dataStrategy;
-  let packingLog: string[] = [];
-  let packedPayloadPreview = "";
-  let results: any[] = [];
+  const packingLog: string[] = [];
+  let packedPayloadPreview;
+  const results: any[] = [];
 
   packingLog.push(`[1] بدء فرز البيانات للاختبار: ${targetExamId}`);
   packingLog.push(`[2] الاستراتيجية المعتمدة لحزم البيانات: ${strategy.toUpperCase()}`);
@@ -2119,10 +2147,10 @@ function handleAggregatedTelemetry(req: any, res: any) {
 }
 
 // Router assignments mapping all three URL patterns to appropriate controllers
-app.post("/api/telemetry/event", apiKeyOrAuth, (req, res) => handleSingleTelemetryEvent(req, res));
-app.post("/api/telemetry", apiKeyOrAuth, (req, res) => handleAggregatedTelemetry(req, res));
+app.post("/api/telemetry/event", apiKeyOrAuth, telemetryRateLimit, (req, res) => handleSingleTelemetryEvent(req, res));
+app.post("/api/telemetry", apiKeyOrAuth, telemetryRateLimit, (req, res) => handleAggregatedTelemetry(req, res));
 
-app.post("/telemetry", apiKeyOrAuth, (req, res) => {
+app.post("/telemetry", apiKeyOrAuth, telemetryRateLimit, (req, res) => {
   if (req.body && req.body.event) {
     return handleSingleTelemetryEvent(req, res);
   } else if (req.body && (req.body.studentId || req.body.studentName)) {
@@ -2242,7 +2270,7 @@ ${JSON.stringify(student.questionTelemetry, null, 2)}
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+      model: "gemini-2.5-flash",
       contents: prompt,
     });
 
@@ -2305,6 +2333,16 @@ The candidate finished the examination with a total duration of **${student.dura
       report: isEnglish ? textEn : textAr
     });
   }
+});
+
+// Global error handler (must be after all routes)
+app.use((err: any, req: any, res: any, next: any) => {
+  console.error(`[SERVER ERROR] ${req.method} ${req.url}:`, err.message || err);
+  res.status(500).json({
+    success: false,
+    error: "حدث خطأ داخلي في الخادم. يرجى المحاولة مرة أخرى.",
+    errorEn: "Internal server error. Please try again."
+  });
 });
 
 // Create Vite server or serve Static Assets
