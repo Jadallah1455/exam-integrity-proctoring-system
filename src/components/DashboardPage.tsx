@@ -199,7 +199,7 @@ export default function DashboardPage(props: DashboardPageProps) {
                   }`}
                 >
                   <Users className="w-4 h-4" />
-                  <span>{lang === 'ar' ? 'ظ‚ط§ط¦ظ…ط© ط§ظ„ط·ظ„ط§ط¨' : 'Roster'}</span>
+                  <span>{lang === 'ar' ? 'قائمة الطلاب' : 'Roster'}</span>
                 </button>
                 <button
                   onClick={() => setDashboardSubTab('alerts')}
@@ -854,7 +854,7 @@ export default function DashboardPage(props: DashboardPageProps) {
                               ? 'bg-rose-500/25 border-rose-500/40 text-red-200 animate-pulse'
                               : (isLightMode ? 'bg-white border-slate-300 text-slate-500 hover:bg-slate-50 hover:border-slate-400' : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700')
                           }`}
-                          title={lang === 'ar' ? 'طھطµظپظٹط© ط³ط±ظٹط¹ط© ظ„ط¬ظ…ظٹط¹ ط§ظ„ط·ظ„ط§ط¨ ط§ظ„ط°ظٹظ† ظ„ط¯ظٹظ‡ظ… ط®ط·ظˆط±ط© ط¹ط§ظ„ظٹط© ظˆظ…ط®ط§ظ„ظپط§طھ ط­ط±ط¬ط©' : 'Quickly focus on candidates with high risk or active violations'}
+                          title={lang === 'ar' ? 'تصفية سريعة لجميع الطلاب الذين لديهم خطورة عالية ومخالفات حرجة' : 'Quickly focus on candidates with high risk or active violations'}
                         >
                           <ShieldAlert className="w-4 h-4 shrink-0 text-red-400" />
                           <span>{lang === 'ar' ? 'ط¹ط§ظ„ظٹ ط§ظ„ط®ط·ظˆط±ط© ظپظ‚ط·' : 'High-Risk Only'}</span>
@@ -1062,39 +1062,39 @@ export default function DashboardPage(props: DashboardPageProps) {
                             const targets = filteredAnalysis.filter(a => a.riskLevel === 'high').map(a => a.studentId);
                             setBatchSelectedIds(targets);
                             showToast(
-                              `طھظ… طھط­ط¯ظٹط¯ ط¬ظ…ظٹط¹ ط§ظ„ط·ظ„ط§ط¨ ط§ظ„ظ…ط¹ط±ط¶ظٹظ† ظ„ظ…ط®ط§ط·ط± ظ…ط±طھظپط¹ط© (${targets.length})`,
+                              `تم تحديد جميع الطلاب المعرضين لمخاطر مرتفعة (${targets.length})`,
                               `Selected all high risk candidates (${targets.length})`
                             );
                           }}
                           className={`text-[9.5px] px-2.5 py-1 rounded-lg cursor-pointer transition font-bold flex items-center gap-1 ${isLightMode ? 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100' : 'bg-red-950/40 hover:bg-red-950/70 border border-red-500/20 hover:border-red-500/40 text-red-300'}`}
                         >
-                          <AlertTriangle className="w-3 h-3" /> {lang === 'ar' ? 'ظ…ط®ط§ط·ط± ظ…ط±طھظپط¹ط©' : 'All High-Risk'}
+                          <AlertTriangle className="w-3 h-3" /> {lang === 'ar' ? 'مخاطر مرتفعة' : 'All High-Risk'}
                         </button>
                         <button
                           onClick={() => {
                             const targets = filteredAnalysis.filter(a => a.riskLevel === 'medium').map(a => a.studentId);
                             setBatchSelectedIds(targets);
                             showToast(
-                              `طھظ… طھط­ط¯ظٹط¯ ظƒط§ظپط© ط§ظ„ط·ظ„ط§ط¨ ط°ظˆظٹ ظ…ط³طھظˆظ‰ ط§ظ„ظ…ط®ط§ط·ط±ط© ط§ظ„ظ…طھظˆط³ط· (${targets.length})`,
+                              `تم تحديد كافة الطلاب ذوي مستوى المخاطرة المتوسط (${targets.length})`,
                               `Selected all medium risk candidates (${targets.length})`
                             );
                           }}
                           className={`text-[9.5px] px-2.5 py-1 rounded-lg cursor-pointer transition font-bold flex items-center gap-1 ${isLightMode ? 'bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100' : 'bg-amber-950/40 hover:bg-amber-950/70 border border-amber-500/20 hover:border-amber-500/40 text-amber-300'}`}
                         >
-                          <AlertCircle className="w-3 h-3" /> {lang === 'ar' ? 'ظ…ط®ط§ط·ط± ظ…طھظˆط³ط·ط©' : 'All Med-Risk'}
+                          <AlertCircle className="w-3 h-3" /> {lang === 'ar' ? 'مخاطر متوسطة' : 'All Med-Risk'}
                         </button>
                         <button
                           onClick={() => {
                             const targets = filteredAnalysis.filter(a => a.riskLevel === 'safe' || a.riskLevel === 'low').map(a => a.studentId);
                             setBatchSelectedIds(targets);
                             showToast(
-                              `طھظ… طھط­ط¯ظٹط¯ ظƒط§ظپط© ط§ظ„ط·ظ„ط§ط¨ ط§ظ„ط¢ظ…ظ†ظٹظ† ظˆط§ظ„ظ…طھظ…ظٹط²ظٹظ† ط¨ط§ظ„ظ†ط²ط§ظ‡ط© (${targets.length})`,
+                              `تم تحديد كافة الطلاب الآمنين والمتميزين بالنزاهة (${targets.length})`,
                               `Selected all secure candidates (${targets.length})`
                             );
                           }}
                           className={`text-[9.5px] px-2.5 py-1 rounded-lg cursor-pointer transition font-bold flex items-center gap-1 ${isLightMode ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100' : 'bg-emerald-950/40 hover:bg-emerald-950/70 border border-emerald-500/20 hover:border-emerald-500/40 text-emerald-300'}`}
                         >
-                          <CheckCircle2 className="w-3 h-3" /> {lang === 'ar' ? 'ط¢ظ…ظ† ظˆظ†ظ‚ظٹ' : 'All Secure'}
+                          <CheckCircle2 className="w-3 h-3" /> {lang === 'ar' ? 'آمن ونقي' : 'All Secure'}
                         </button>
                       </div>
                     </div>
@@ -1133,35 +1133,35 @@ export default function DashboardPage(props: DashboardPageProps) {
                           <button
                             onClick={downloadSISAuditJSONForSelection}
                             className={`text-[10px] font-bold px-2.5 py-1.5 rounded transition cursor-pointer flex items-center gap-1 border shrink-0 ${isLightMode ? 'bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-200' : 'bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border-purple-500/30'}`}
-                            title={lang === 'ar' ? 'طھطµط¯ظٹط± ط¨ظٹط§ظ†ط§طھ ط§ظ„ط·ظ„ط§ط¨ ط§ظ„ظ…ط­ط¯ط¯ظٹظ† ظ…ط¨ط§ط´ط±ط© ظ„ظ…ظ„ظپ ظ†ط¸ط§ظ… SIS ط§ظ„ط£ظƒط§ط¯ظٹظ…ظٹ' : 'Export selected student files to SIS JSON format'}
+                            title={lang === 'ar' ? 'تصدير بيانات الطلاب المحددين مباشرة لملف نظام SIS الأكاديمي' : 'Export selected student files to SIS JSON format'}
                           >
                             <Database className="w-3.5 h-3.5 text-purple-400" />
-                            <span>{lang === 'ar' ? 'طھطµط¯ظٹط± ظ„ظ€ SIS' : 'SIS Export'}</span>
+                            <span>{lang === 'ar' ? 'تصدير لـ SIS' : 'SIS Export'}</span>
                           </button>
                           <button
                             onClick={handleBatchExportJSON}
                             className={`text-[10px] font-bold px-2.5 py-1.5 rounded transition cursor-pointer flex items-center gap-1 border shrink-0 ${isLightMode ? 'bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200' : 'bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 border-blue-500/30'}`}
-                            title={lang === 'ar' ? 'طھط¬ظ…ظٹط¹ ظˆطھطµط¯ظٹط± ظ…ظ„ظپ ط¯ظپط¹ط§طھ ط§ظ„ظ…ظˆط­ط¯ ظ„ظ„ط·ظ„ط§ط¨ ط§ظ„ظ…ط­ط¯ط¯ظٹظ† ظ…ط¨ط§ط´ط±ط© ط¨طµظٹط؛ط© JSON' : 'Export unified telemetry cohort report directly in JSON format'}
+                            title={lang === 'ar' ? 'تجميع وتصدير ملف دفعات الموحد للطلاب المحددين مباشرة بصيغة JSON' : 'Export unified telemetry cohort report directly in JSON format'}
                           >
                             <Code className="w-3.5 h-3.5 text-blue-400" />
-                            <span>{lang === 'ar' ? 'طھطµط¯ظٹط± ط¯ظپط¹ط© JSON' : 'Batch Export JSON'}</span>
+                            <span>{lang === 'ar' ? 'تصدير دفعة JSON' : 'Batch Export JSON'}</span>
                           </button>
                           <button
                             onClick={downloadBulkForensicPDF}
                             className={`text-[10px] font-bold px-2.5 py-1.5 rounded transition cursor-pointer flex items-center gap-1 border shrink-0 ${isLightMode ? 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border-indigo-500/30'}`}
-                            title={lang === 'ar' ? 'طھظˆظ„ظٹط¯ ظˆطھطµط¯ظٹط± طھظ‚ط±ظٹط± ط¬ظ†ط§ط¦ظٹ ظ…ظˆط­ط¯ ظ…طھط¹ط¯ط¯ ط§ظ„طµظپط­ط§طھ ظ„ظ„ط·ظ„ط§ط¨ ط§ظ„ظ…ط­ط¯ط¯ظٹظ†' : 'Generate and export a unified paginated PDF forensic report for selected candidates'}
+                            title={lang === 'ar' ? 'توليد وتصدير تقرير جنائي موحد متعدد الصفحات للطلاب المحددين' : 'Generate and export a unified paginated PDF forensic report for selected candidates'}
                           >
                             <FileText className="w-3.5 h-3.5 text-indigo-400" />
-                            <span>{lang === 'ar' ? 'طھظ‚ط±ظٹط± ط¬ظ†ط§ط¦ظٹ ظ…ظˆط­ط¯' : 'Bulk Forensic Export'}</span>
+                            <span>{lang === 'ar' ? 'تقرير جنائي موحد' : 'Bulk Forensic Export'}</span>
                           </button>
                           {batchSelectedIds.length >= 2 && (
                             <button
                               onClick={() => setIsComparisonModalOpen(true)}
                               className="bg-purple-600 hover:bg-purple-500 text-white border border-purple-500/30 text-[10px] font-extrabold px-3 py-1.5 rounded transition cursor-pointer flex items-center gap-1 shrink-0 animate-pulse"
-                              title={lang === 'ar' ? 'ظ…ظ‚ط§ط±ظ†ط© ط§ظ„ط·ظ„ط§ط¨ ط§ظ„ظ…ط­ط¯ط¯ظٹظ† ط¬ظ†ط¨ط§ظ‹ ط¥ظ„ظ‰ ط¬ظ†ط¨' : 'Compare selected candidates side-by-side'}
+                              title={lang === 'ar' ? 'مقارنة الطلاب المحددين جنباً إلى جنب' : 'Compare selected candidates side-by-side'}
                             >
                               <ArrowUpRight className="w-3.5 h-3.5 text-purple-100" />
-                              <span>{lang === 'ar' ? 'ظ…ظ‚ط§ط±ظ†ط© ط§ظ„ط·ظ„ط§ط¨' : 'Compare Students'}</span>
+                              <span>{lang === 'ar' ? 'مقارنة الطلاب' : 'Compare Students'}</span>
                             </button>
                           )}
                           <button
@@ -2574,7 +2574,7 @@ export default function DashboardPage(props: DashboardPageProps) {
                                      <div>
                                        <div className="flex justify-between items-center text-[9px] text-slate-400 font-mono">
                                          <span className="font-extrabold text-blue-400 uppercase">
-                                           {lang === 'ar' ? `ط§ظ„ط³ط¤ط§ظ„ ${replayState.activeQ} / 5` : `QUESTION ${replayState.activeQ} OF 5`}
+                                           {lang === 'ar' ? `السؤال ${replayState.activeQ} / 5` : `QUESTION ${replayState.activeQ} OF 5`}
                                          </span>
                                          <span className="text-slate-500">
                                            {lang === 'ar' ? `ط§ظ„ظ…ط¤ظ‚طھ: ${replayState.currentSecond}ط«` : `Timeline: ${replayState.currentSecond}s`}

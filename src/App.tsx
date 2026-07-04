@@ -3,19 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef, useMemo } from 'react';
-import EngineControlPanel from './components/EngineControlPanel';
-import RiskHeatmap from './components/RiskHeatmap';
-import SiteTour from './components/SiteTour';
-import StudentComparisonModal from './components/StudentComparisonModal';
-import AnalyticsPage from './pages/AnalyticsPage';
-import SimulatorPage from './pages/SimulatorPage';
-import ApiDocsPage from './pages/ApiDocsPage';
-import AuditorLogPage from './pages/AuditorLogPage';
+import { useState, useEffect, useRef, useMemo, lazy, Suspense } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
-import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
 import DashboardPage from './components/DashboardPage';
-import ProctorTimeoutLock from './components/ProctorTimeoutLock';
 import Toast from './components/Toast';
 import QuickActionsMenu from './components/QuickActionsMenu';
 import IntegrityPulseGauge from './components/IntegrityPulseGauge';
@@ -33,6 +23,17 @@ import { TelemetryPayload, AnomalyReport, ExamDifficulty } from './types';
 import { translations } from './translations';
 import { jsPDF } from 'jspdf';
 import LoginPage from './components/LoginPage';
+
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
+const SimulatorPage = lazy(() => import('./pages/SimulatorPage'));
+const ApiDocsPage = lazy(() => import('./pages/ApiDocsPage'));
+const AuditorLogPage = lazy(() => import('./pages/AuditorLogPage'));
+const RiskHeatmap = lazy(() => import('./components/RiskHeatmap'));
+const EngineControlPanel = lazy(() => import('./components/EngineControlPanel'));
+const StudentComparisonModal = lazy(() => import('./components/StudentComparisonModal'));
+const SiteTour = lazy(() => import('./components/SiteTour'));
+const KeyboardShortcutsHelp = lazy(() => import('./components/KeyboardShortcutsHelp'));
+const ProctorTimeoutLock = lazy(() => import('./components/ProctorTimeoutLock'));
 
 export default function App() {
   interface Teacher {
@@ -172,7 +173,7 @@ export default function App() {
 
   // Moodle Real-Time Stream Simulator State
   const [streamStudentId, setStreamStudentId] = useState<number>(2);
-  const [streamStudentName, setStreamStudentName] = useState<string>("ط£ط­ظ…ط¯ ط§ظ„ط´ط±ظٹظپ");
+  const [streamStudentName, setStreamStudentName] = useState<string>("أحمد الشريف");
   const [streamQuizId, setStreamQuizId] = useState<number>(1);
   const [streamQuizName, setStreamQuizName] = useState<string>("quiz_test_1");
   const [streamEventType, setStreamEventType] = useState<string>("window_blur");
@@ -283,7 +284,7 @@ export default function App() {
           timestamp: new Date(Date.now() - 3600000 * 24).toISOString().replace('T', ' ').slice(0, 19),
           actionType: 'add_note',
           studentId: 'STD-2026-03',
-          studentName: 'ظپظٹطµظ„ ط§ظ„ط³ط¯ظٹط±ظٹ',
+          studentName: 'فيصل السديري',
           description: 'Added internal note: Verified hardware setup during test entry.',
           userRole: 'admin'
         },
@@ -292,7 +293,7 @@ export default function App() {
           timestamp: new Date(Date.now() - 3600000 * 4).toISOString().replace('T', ' ').slice(0, 19),
           actionType: 'verdict_change',
           studentId: 'STD-2026-09',
-          studentName: 'ظ†ظˆط±ط© ط§ظ„ط³ط¨ظٹط¹ظٹ',
+          studentName: 'نورة السبيعي',
           description: 'Updated official verdict to approved (approved_under_observation).',
           userRole: 'proctor'
         }
@@ -330,8 +331,8 @@ export default function App() {
   const defaultPresets = [
     {
       id: 'preset-collusion',
-      nameEn: 'âڑ ï¸ڈ Collusion & Network IP Conflict',
-      nameAr: 'âڑ ï¸ڈ ط§ظ„طھظˆط§ط·ط¤ ظˆطھط¹ط§ط±ط¶ ط§ظ„ط´ط¨ظƒط©',
+      nameEn: '☠️ Collusion & Network IP Conflict',
+      nameAr: '☠️ التواطؤ وتعارض الشبكة',
       searchQuery: '',
       anomalyFilter: 'ip_conflict',
       riskFilter: 'high',
@@ -339,8 +340,8 @@ export default function App() {
     },
     {
       id: 'preset-copy-paste',
-      nameEn: 'ًں“‹ Heavy Copy & Paste Abuse',
-      nameAr: 'ًں“‹ ظ†ط³ط® ظˆظ„طµظ‚ ظ…ظƒط«ظپ',
+      nameEn: '📋 Heavy Copy & Paste Abuse',
+      nameAr: '📋 نسخ ولصق مكثف',
       searchQuery: '',
       anomalyFilter: 'copy_paste',
       riskFilter: 'all',
@@ -348,8 +349,8 @@ export default function App() {
     },
     {
       id: 'preset-safe-vibe',
-      nameEn: 'ًںں¢ Safe Candidates Session',
-      nameAr: 'ًںں¢ ظپط­طµ ط§ظ„ط·ظ„ط§ط¨ ط§ظ„ط¢ظ…ظ†ظٹظ†',
+      nameEn: '🟢 Safe Candidates Session',
+      nameAr: '🟢 فحص الطلاب الآمنين',
       searchQuery: '',
       anomalyFilter: 'all',
       riskFilter: 'safe',
@@ -513,7 +514,7 @@ export default function App() {
         log.push({
           second: currentSec,
           text: `Focused Question ${q.questionNumber} answer workspace`,
-          textAr: `طھط±ظƒظٹط² ظ…ط¤ط´ط± ط§ظ„ظƒطھط§ط¨ط© ط¹ظ„ظ‰ ط§ظ„ط³ط¤ط§ظ„ ط±ظ‚ظ… ${q.questionNumber}`,
+          textAr: `تركيز مؤشر الكتابة على السؤال رقم ${q.questionNumber}`,
           type: 'focus'
         });
         const changes = q.changesCount;
@@ -522,7 +523,7 @@ export default function App() {
           log.push({
             second: currentSec + offset,
             text: `Q${q.questionNumber}: Modified written response text`,
-            textAr: `ط§ظ„ط³ط¤ط§ظ„ ${q.questionNumber}: طھظ… طھط¹ط¯ظٹظ„ ط¥ط¬ط§ط¨ط© ط§ظ„ظ†طµ ط§ظ„ظ…ط¯ط®ظ„ط© ظٹط¯ظˆظٹط§ظ‹`,
+            textAr: `السؤال ${q.questionNumber}: تم تعديل إجابة النص المدخلة يدوياً`,
             type: 'click'
           });
         }
@@ -536,7 +537,7 @@ export default function App() {
         log.push({
           second: currentSec,
           text: `Focused Question ${qNum} answer workspace`,
-          textAr: `طھط±ظƒظٹط² ظ…ط¤ط´ط± ط§ظ„ظƒطھط§ط¨ط© ط¹ظ„ظ‰ ط§ظ„ط³ط¤ط§ظ„ ط±ظ‚ظ… ${qNum}`,
+          textAr: `تركيز مؤشر الكتابة على السؤال رقم ${qNum}`,
           type: 'focus'
         });
 
@@ -546,7 +547,7 @@ export default function App() {
           log.push({
             second: currentSec + offset,
             text: `Question ${qNum}: Keypress response text modified`,
-            textAr: `ط§ظ„ط³ط¤ط§ظ„ ${qNum}: طھظ… طھط¹ط¯ظٹظ„ ط¥ط¬ط§ط¨ط© ط§ظ„ظ†طµ ط§ظ„ظ…ط¯ط®ظ„ط© ظٹط¯ظˆظٹط§ظ‹`,
+            textAr: `السؤال ${qNum}: تم تعديل إجابة النص المدخلة يدوياً`,
             type: 'click'
           });
         }
@@ -562,8 +563,8 @@ export default function App() {
         const trigger = (i + 1) * step;
         log.push({
           second: trigger,
-          text: `ًں“‹ Text Copied: Candidate copied text to local clipboard`,
-          textAr: `ًں“‹ ظ†ط³ط® ط§ظ„ظ†طµ: ظ‚ط§ظ… ط§ظ„ط·ط§ظ„ط¨ ط¨ظ†ط³ط® ظ†طµ ظ…ظ†ط·ظˆظ‚ ط§ظ„ط³ط¤ط§ظ„ ط¥ظ„ظ‰ ط§ظ„ط­ط§ظپط¸ط©`,
+          text: `📋 Text Copied: Candidate copied text to local clipboard`,
+          textAr: `📋 نسخ النص: قام الطالب بنسخ نص منطلق السؤال إلى الحافظة`,
           type: 'copy'
         });
       }
@@ -575,8 +576,8 @@ export default function App() {
         const trigger = (i + 1) * step + 4;
         log.push({
           second: trigger,
-          text: `ًں“‹ External Paste: Candidate pasted a block of external characters`,
-          textAr: `ًں“‹ ظ„طµظ‚ ط®ط§ط±ط¬ظٹ: طھظ… ظ„طµظ‚ ظ†طµظˆطµ ظ…طµط¯ط±ظٹط© ظ…ظ† ط®ط§ط±ط¬ ظ†ط§ظپط°ط© ط§ظ„ط§ط®طھط¨ط§ط± ط§ظ„ظ…ط¹طھظ…ط¯ط©`,
+          text: `📋 External Paste: Candidate pasted a block of external characters`,
+          textAr: `📋 لصق خارجي: تم لصق نصوص مصدرية من خارج نافذة الاختبار المعتمدة`,
           type: 'paste'
         });
       }
@@ -588,14 +589,14 @@ export default function App() {
         const trigger = (i + 1) * step;
         log.push({
           second: trigger,
-          text: `ًں”´ Tab Blurred: Switched focus to alternative browser tab / window`,
-          textAr: `ًں”´ طھط±ظƒظٹط² ظ…ظ„ط؛ظ‰: ط®ط±ظˆط¬ ط§ظ„ظ…ط±ط´ط­ ط§ظ„ظƒط§ظ…ظ„ ظ…ظ† ط¹ظ„ط§ظ…ط© طھط¨ظˆظٹط¨ ط§ظ„ط§ط®طھط¨ط§ط±`,
+          text: `🔴 Tab Blurred: Switched focus to alternative browser tab / window`,
+          textAr: `🔴 تركيز ملغى: خروج المرشح الكامل من علامة تبويب الاختبار`,
           type: 'blur'
         });
         log.push({
           second: Math.min(currentSec, trigger + 4),
-          text: `ًںں¢ Connection Restored: Candidate returned back to secure browser viewport`,
-          textAr: `ًںں¢ ط§ط³طھط¹ط§ط¯ط© ط§ظ„طھط±ظƒظٹط²: ط¹ظˆط¯ط© ط§ظ„ظ…ط±ط´ط­ ظ…ط¬ط¯ط¯ط§ظ‹ ظ„ط¨ظٹط¦ط© طھطµظپط­ ط§ظ„ط§ط®طھط¨ط§ط±`,
+          text: `🟢 Connection Restored: Candidate returned back to secure browser viewport`,
+          textAr: `🟢 استعادة التركيز: عودة المرشح مجدداً لبيئة تصفح الاختبار`,
           type: 'focus'
         });
       }
@@ -2569,102 +2570,114 @@ export default function App() {
             <DashboardPage {...dashboardProps} />
           ) : activeTab === 'analytics' ? (
             <ErrorBoundary key="analytics">
-              <AnalyticsPage
-                submissions={submissions}
-                analyses={analyses}
-                lang={lang}
-                isLightMode={isLightMode}
-                selectedStudentId={selectedStudentId}
-                onSelectStudent={(id) => {
-                  setSelectedStudentId(id);
-                  showToast(
-                    `طھظژظ…ظ‘ طھط­ط¯ظٹط¯ ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ ظ„ظ„ط·ط§ظ„ط¨: ${id}`,
-                    `Selected student profile: ${id}`
-                  );
-                }}
-                riskThreshold={riskThreshold}
-              />
+              <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>}>
+                <AnalyticsPage
+                  submissions={submissions}
+                  analyses={analyses}
+                  lang={lang}
+                  isLightMode={isLightMode}
+                  selectedStudentId={selectedStudentId}
+                  onSelectStudent={(id) => {
+                    setSelectedStudentId(id);
+                    showToast(
+                      `طھظژظ…ظ‘ طھط­ط¯ظٹط¯ ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ ظ„ظ„ط·ط§ظ„ط¨: ${id}`,
+                      `Selected student profile: ${id}`
+                    );
+                  }}
+                  riskThreshold={riskThreshold}
+                />
+              </Suspense>
             </ErrorBoundary>
           ) : activeTab === 'simulator' ? (
             <ErrorBoundary key="simulator">
-              {(() => {
-                const activeExam = exams.find(ex => ex.id === selectedExamId);
-                return (
-                  <SimulatorPage
-                    isLightMode={isLightMode}
-                    lang={lang}
-                    activeExamId={selectedExamId}
-                    activeExamName={activeExam ? (lang === 'ar' ? activeExam.nameAr : activeExam.nameEn) : undefined}
-                    activeExamDifficulty={activeExam?.difficulty}
-                    onTelemetrySubmitted={handleReload}
-                  />
-                );
-              })()}
+              <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>}>
+                {(() => {
+                  const activeExam = exams.find(ex => ex.id === selectedExamId);
+                  return (
+                    <SimulatorPage
+                      isLightMode={isLightMode}
+                      lang={lang}
+                      activeExamId={selectedExamId}
+                      activeExamName={activeExam ? (lang === 'ar' ? activeExam.nameAr : activeExam.nameEn) : undefined}
+                      activeExamDifficulty={activeExam?.difficulty}
+                      onTelemetrySubmitted={handleReload}
+                    />
+                  );
+                })()}
+              </Suspense>
             </ErrorBoundary>
           ) : activeTab === 'heatmap' ? (
-            <RiskHeatmap
-              analyses={analyses}
-              submissions={submissions}
-              selectedStudentId={selectedStudentId}
-              onSelectStudent={(studentId) => {
-                setSelectedStudentId(studentId);
-                showToast(
-                  `طھظژظ…ظ‘ طھط­ط¯ظٹط¯ ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ ظ„ظ„ط·ط§ظ„ط¨: ${studentId}`,
-                  `Selected student profile: ${studentId}`
-                );
-              }}
-              lang={lang}
-              riskThreshold={riskThreshold}
-            />
+            <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>}>
+              <RiskHeatmap
+                analyses={analyses}
+                submissions={submissions}
+                selectedStudentId={selectedStudentId}
+                onSelectStudent={(studentId) => {
+                  setSelectedStudentId(studentId);
+                  showToast(
+                    `طھظژظ…ظ‘ طھط­ط¯ظٹط¯ ط§ظ„ظ…ظ„ظپ ط§ظ„ط´ط®طµظٹ ظ„ظ„ط·ط§ظ„ط¨: ${studentId}`,
+                    `Selected student profile: ${studentId}`
+                  );
+                }}
+                lang={lang}
+                riskThreshold={riskThreshold}
+              />
+            </Suspense>
           ) : activeTab === 'engineControl' ? (
-            <EngineControlPanel
-              lang={lang}
-              isLightMode={isLightMode}
-              exams={exams}
-              showToast={(ar, en) => showToast(ar, en)}
-              handleReload={fetchData}
-              userRole={userRole}
-              setUserRole={(role) => {
-                setUserRole(role);
-                localStorage.setItem('cyber_user_role', role);
-              }}
-            />
+            <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>}>
+              <EngineControlPanel
+                lang={lang}
+                isLightMode={isLightMode}
+                exams={exams}
+                showToast={(ar, en) => showToast(ar, en)}
+                handleReload={fetchData}
+                userRole={userRole}
+                setUserRole={(role) => {
+                  setUserRole(role);
+                  localStorage.setItem('cyber_user_role', role);
+                }}
+              />
+            </Suspense>
           ) : activeTab === 'auditorLog' ? (
             <ErrorBoundary key="auditorLog">
-              <AuditorLogPage
-                isLightMode={isLightMode}
-                lang={lang}
-                auditorLogs={auditorLogs}
-                setAuditorLogs={setAuditorLogs}
-                showToast={showToast}
-                privacyMode={privacyMode}
-                getDeterministicMaskedId={getDeterministicMaskedId}
-                getDeterministicAlias={getDeterministicAlias}
-              />
+              <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>}>
+                <AuditorLogPage
+                  isLightMode={isLightMode}
+                  lang={lang}
+                  auditorLogs={auditorLogs}
+                  setAuditorLogs={setAuditorLogs}
+                  showToast={showToast}
+                  privacyMode={privacyMode}
+                  getDeterministicMaskedId={getDeterministicMaskedId}
+                  getDeterministicAlias={getDeterministicAlias}
+                />
+              </Suspense>
             </ErrorBoundary>
           ) : (
             <ErrorBoundary key="apiDocs">
-              <ApiDocsPage
-                isLightMode={isLightMode}
-                lang={lang}
-                currentT={currentT}
-                copiedCurl={copiedCurl}
-                copyCurlToClipboard={copyCurlToClipboard}
-                streamLoading={streamLoading}
-                streamConsoleLogs={streamConsoleLogs}
-                setStreamConsoleLogs={setStreamConsoleLogs}
-                streamStudentId={streamStudentId}
-                setStreamStudentId={setStreamStudentId}
-                streamStudentName={streamStudentName}
-                setStreamStudentName={setStreamStudentName}
-                streamEventType={streamEventType}
-                setStreamEventType={setStreamEventType}
-                streamQuizId={streamQuizId}
-                setStreamQuizId={setStreamQuizId}
-                streamQuizName={streamQuizName}
-                setStreamQuizName={setStreamQuizName}
-                sendMoodleLiveEvent={sendMoodleLiveEvent}
-              />
+              <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" /></div>}>
+                <ApiDocsPage
+                  isLightMode={isLightMode}
+                  lang={lang}
+                  currentT={currentT}
+                  copiedCurl={copiedCurl}
+                  copyCurlToClipboard={copyCurlToClipboard}
+                  streamLoading={streamLoading}
+                  streamConsoleLogs={streamConsoleLogs}
+                  setStreamConsoleLogs={setStreamConsoleLogs}
+                  streamStudentId={streamStudentId}
+                  setStreamStudentId={setStreamStudentId}
+                  streamStudentName={streamStudentName}
+                  setStreamStudentName={setStreamStudentName}
+                  streamEventType={streamEventType}
+                  setStreamEventType={setStreamEventType}
+                  streamQuizId={streamQuizId}
+                  setStreamQuizId={setStreamQuizId}
+                  streamQuizName={streamQuizName}
+                  setStreamQuizName={setStreamQuizName}
+                  sendMoodleLiveEvent={sendMoodleLiveEvent}
+                />
+              </Suspense>
             </ErrorBoundary>
           )}
         </div>
@@ -2688,39 +2701,47 @@ export default function App() {
       <BatchProgressHUD batchProgress={batchProgress} batchOpName={batchOpName} lang={lang} isLightMode={isLightMode} />
 
       {/* Student Collaborative Comparison Audit Portal */}
-      <StudentComparisonModal
-        isOpen={isComparisonModalOpen}
-        onClose={() => setIsComparisonModalOpen(false)}
-        selectedStudentIds={batchSelectedIds}
-        submissions={submissions}
-        analyses={analyses}
-        lang={lang}
-        isLightMode={isLightMode}
-      />
+      <Suspense fallback={null}>
+        <StudentComparisonModal
+          isOpen={isComparisonModalOpen}
+          onClose={() => setIsComparisonModalOpen(false)}
+          selectedStudentIds={batchSelectedIds}
+          submissions={submissions}
+          analyses={analyses}
+          lang={lang}
+          isLightMode={isLightMode}
+        />
+      </Suspense>
 
 
 
       {/* Keyboard Shortcuts Floating Help Modal */}
       {isKeyboardHelpOpen && (
-        <KeyboardShortcutsHelp lang={lang} isLightMode={isLightMode} onClose={() => setIsKeyboardHelpOpen(false)} />
+        <Suspense fallback={null}>
+          <KeyboardShortcutsHelp lang={lang} isLightMode={isLightMode} onClose={() => setIsKeyboardHelpOpen(false)} />
+        </Suspense>
       )}
 
       <Toast toast={toast} lang={lang} />
 
       {/* Proctor Timeout Security Lock Overlay */}
-      <ProctorTimeoutLock
-        lang={lang}
-        isLightMode={isLightMode}
-        isLocked={isLocked}
-        onUnlock={() => {
-          setIsLocked(false);
-          lastActiveTimestamp.current = Date.now();
-          showToast("تم إلغاء قفل لوحة التحكم بنجاح", "Sovereign panel unlocked successfully");
-        }}
-      />
+      <Suspense fallback={null}>
+        <ProctorTimeoutLock
+          lang={lang}
+          isLightMode={isLightMode}
+          isLocked={isLocked}
+          onUnlock={() => {
+            setIsLocked(false);
+            lastActiveTimestamp.current = Date.now();
+            showToast("تم إلغاء قفل لوحة التحكم بنجاح", "Sovereign panel unlocked successfully");
+          }}
+        />
+      </Suspense>
 
       {/* Site Tour / Help Guide */}
-      <SiteTour lang={lang} isLightMode={isLightMode} />
+      <Suspense fallback={null}>
+        <SiteTour lang={lang} isLightMode={isLightMode} />
+      </Suspense>
     </div>
   );
 }
