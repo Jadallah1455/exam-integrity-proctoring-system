@@ -15,6 +15,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
 import { TelemetryPayload, AnomalyReport, ExamDifficulty } from "./src/types";
+import * as db from "./src/db";
 
 dotenv.config();
 
@@ -978,7 +979,6 @@ function saveDatabase() {
       anomalyWeights
     };
     const serialized = JSON.stringify(dataToSave, null, 2);
-    // Atomic write: write to temp file then rename to prevent corruption
     const tmpPath = DB_FILE_PATH + ".tmp";
     fs.writeFileSync(tmpPath, serialized, "utf8");
     fs.renameSync(tmpPath, DB_FILE_PATH);
@@ -986,38 +986,46 @@ function saveDatabase() {
   } catch (err: any) {
     console.error(`[Database Error] Failed to save database:`, err);
   }
+  // Also sync to MySQL if available
+  db.saveConfig('proctorRules', proctorRules).catch(() => {});
+  db.saveConfig('timingConfig', timingConfig).catch(() => {});
+  db.saveConfig('copyPasteConfig', copyPasteConfig).catch(() => {});
+  db.saveConfig('anomalyWeights', anomalyWeights).catch(() => {});
+  db.saveAllVerdicts(studentVerdicts).catch(() => {});
+  db.saveSubmissions(studentSubmissions).catch(() => {});
+  db.saveEvents(savedEvents).catch(() => {});
 }
 
 function loadDatabase() {
   try {
-    if (fs.existsSync(DB_FILE_PATH)) {
+    let loadedFromDb = false;
+    if (db.isDbAvailable()) {
+      Promise.all([
+        db.loadAllSubmissions().then(data => { if (data.length > 0) { studentSubmissions = data; loadedFromDb = true; } }),
+        db.loadAllEvents().then(data => { if (data.length > 0) { savedEvents = data; loadedFromDb = true; } }),
+        db.loadAllVerdicts().then(data => { if (Object.keys(data).length > 0) { Object.assign(studentVerdicts, data); loadedFromDb = true; } }),
+        db.loadConfig('proctorRules').then(data => { if (data) { proctorRules = data; loadedFromDb = true; } }),
+        db.loadConfig('timingConfig').then(data => { if (data) { timingConfig = data; loadedFromDb = true; } }),
+        db.loadConfig('copyPasteConfig').then(data => { if (data) { copyPasteConfig = data; loadedFromDb = true; } }),
+        db.loadConfig('anomalyWeights').then(data => { if (data) { anomalyWeights = data; loadedFromDb = true; } }),
+      ]).catch(() => {});
+    }
+    if (!loadedFromDb && fs.existsSync(DB_FILE_PATH)) {
       const content = fs.readFileSync(DB_FILE_PATH, "utf8");
       const parsed = JSON.parse(content);
-      if (parsed.studentSubmissions) {
-        studentSubmissions = parsed.studentSubmissions;
-      }
-      if (parsed.studentVerdicts) {
-        Object.assign(studentVerdicts, parsed.studentVerdicts);
-      }
-      if (parsed.events) {
-        savedEvents = parsed.events;
-      }
-      if (parsed.proctorRules) {
-        proctorRules = parsed.proctorRules;
-      }
-      if (parsed.timingConfig) {
-        timingConfig = parsed.timingConfig;
-      }
-      if (parsed.copyPasteConfig) {
-        copyPasteConfig = parsed.copyPasteConfig;
-      }
-      if (parsed.anomalyWeights) {
-        anomalyWeights = parsed.anomalyWeights;
-      }
-      console.log(`[Database] Loaded successfully. Submissions: ${studentSubmissions.length}, Events: ${savedEvents.length}`);
-    } else {
-      console.log(`[Database] Database.json does not exist. Saving seeded mock entries as default dataset...`);
+      if (parsed.studentSubmissions) studentSubmissions = parsed.studentSubmissions;
+      if (parsed.studentVerdicts) Object.assign(studentVerdicts, parsed.studentVerdicts);
+      if (parsed.events) savedEvents = parsed.events;
+      if (parsed.proctorRules) proctorRules = parsed.proctorRules;
+      if (parsed.timingConfig) timingConfig = parsed.timingConfig;
+      if (parsed.copyPasteConfig) copyPasteConfig = parsed.copyPasteConfig;
+      if (parsed.anomalyWeights) anomalyWeights = parsed.anomalyWeights;
+      console.log(`[Database] Loaded from file. Submissions: ${studentSubmissions.length}, Events: ${savedEvents.length}`);
+    } else if (!loadedFromDb) {
+      console.log(`[Database] No data found. Saving seeded mock entries as default dataset...`);
       saveDatabase();
+    } else {
+      console.log(`[Database] Loaded from MySQL. Submissions: ${studentSubmissions.length}, Events: ${savedEvents.length}`);
     }
   } catch (err: any) {
     console.error(`[Database Error] Failed to load database:`, err);
@@ -2028,6 +2036,7 @@ function handleSingleTelemetryEvent(req: any, res: any) {
     event: event
   };
   savedEvents.push(rawEventEntry);
+  db.saveEvent(rawEventEntry).catch(() => {});
 
   const sessionId = event.session_id || `sess_${rawQuizId}_${rawStudentId}`;
 
@@ -2348,6 +2357,7 @@ app.use((err: any, req: any, res: any, next: any) => {
 // Create Vite server or serve Static Assets
 async function startServer() {
   await seedUsers();
+  await db.initDb();
   loadDatabase();
   
   const distDir = path.join(process.cwd(), "dist");
